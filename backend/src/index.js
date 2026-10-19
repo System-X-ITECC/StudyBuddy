@@ -1,3 +1,4 @@
+import { mountOrganisationRoutes, getOrganisation } from "./organisation.js";
 import { libraryRouter, saveGeneratedItem, removeAccountLibraryFiles, saveExportItem } from "./library.js";
 import express from "express"; // Run an independent Node/Express backend.
 import { assertBackendEnvironment } from "./environment.js";
@@ -132,6 +133,8 @@ const profileSchema = z.object({
   difficulty: z.enum(["beginner", "intermediate", "advanced"]),
   // Set the preferences option for this operation.
   preferences: z.string().max(1200),
+  displayName: z.string().trim().max(60).optional(),
+  customPrompt: z.string().trim().max(1600).optional(),
 }); // Preserve explicit, bounded personalization controls.
 // Run app.put with the arguments below.
 app.put("/api/profile", async (req, res) =>
@@ -161,8 +164,14 @@ app.delete("/api/profile/topics", async (req, res) => {
 }); // Clear learned habits independently of written preferences.
 // Run app.delete with the arguments below.
 app.delete("/api/profile/memory", async (req, res) => {
-  // Wait for this asynchronous operation before continuing.
-  await putProfile(req, {});
+  // Forget learning preferences without deleting conversation organisation.
+  // Folder IDs and assignments are workspace data, not learned AI memory.
+  const previous = await getProfile(req);
+  const { folders, assignments } = getOrganisation(previous);
+  await putProfile(req, {
+    chatFolders: folders,
+    chatFolderAssignments: assignments,
+  });
   // Wait for this asynchronous operation before continuing.
   await result(req.db.from("feedback").delete().eq("user_id", req.user));
   // Run res.json with the arguments below.
@@ -234,6 +243,7 @@ app.post("/api/chats", async (req, res) => {
   // Close the current expression or block.
   );
 }); // Create a user-owned conversation.
+mountOrganisationRoutes(app, { result, getProfile, putProfile });
 // Run app.param with the arguments below.
 app.param("chat", async (req, res, next, id) => {
   // Apply the following behavior only when its condition matches.
@@ -432,7 +442,7 @@ app.post("/api/chats/:chat/link", async (req, res) => {
 // Initialize generation for the current operation.
 const generation = z.object({
   // Set the question option for this operation.
-  question: z.string().min(1).max(6000),
+  question: z.string().min(1).max(20000),
   // Set the style option for this operation.
   style: z.enum([
     // Supply this literal value to the enclosing operation.

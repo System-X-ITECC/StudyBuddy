@@ -365,7 +365,7 @@ test("DeepSeek request is grounded and validates structured answers", async (con
     assert.ok(!JSON.stringify(sent).includes("PRIVATE_MEMORY"));
     // Run assert.match with the arguments below.
     // Run assert.match with the arguments below.
-    assert.match(sent.messages[0].content, /ONLY from EVIDENCE/);
+    assert.match(sent.messages[0].content, /If EVIDENCE is supplied/);
     // Run assert.equal with the arguments below.
     // Run assert.equal with the arguments below.
     assert.equal(result.citations[0].label, "S1");
@@ -382,3 +382,50 @@ test("DeepSeek request is grounded and validates structured answers", async (con
   // Close the current expression or block.
   }
 }); // Verify opt-out behavior and mock only the external provider boundary.
+
+test('StudyBuddy answers general questions without uploaded documents', async (context) => {
+  const existing = process.env.DEEPSEEK_API_KEY;
+  process.env.DEEPSEEK_API_KEY = 'test-only';
+  let sent;
+  context.mock.method(globalThis, 'fetch', async (_url, options) => {
+    sent=JSON.parse(options.body);
+    return {ok:true, json:async()=>({choices:[{finish_reason:'stop',message:{content:'A concise answer.'}}]})};
+  });
+  try {
+    const result=await answer({
+      question:'What are study habits?',history:[],sources:[],profile:{displayName:'Learner',customPrompt:'Prefer short examples',personalization:false},
+      style:'Short summary',kind:'chat',feedback:[],
+    });
+    assert.equal(result.content,'A concise answer.');
+    assert.deepEqual(result.citations,[]);
+    assert.match(sent.messages[0].content,/StudyBuddy/);
+    assert.match(sent.messages[0].content,/Learner/);
+    assert.doesNotMatch(sent.messages[0].content,/Prefer short examples/); // Memory is off: custom prompts must not be sent.
+    // With memory enabled, a user's custom instructions should be used.
+  } finally {
+    if(existing===undefined)delete process.env.DEEPSEEK_API_KEY;
+    else process.env.DEEPSEEK_API_KEY=existing;
+  }
+});
+
+
+test('StudyBuddy applies custom instructions when personalization is enabled', async (context) => {
+  const previousKey = process.env.DEEPSEEK_API_KEY;
+  process.env.DEEPSEEK_API_KEY = 'test-only';
+  let request;
+  context.mock.method(globalThis, 'fetch', async (_url, options) => {
+    request = JSON.parse(options.body);
+    return { ok:true, json:async()=>({ choices:[{finish_reason:'stop',message:{content:'OK'}}] }) };
+  });
+  try {
+    await answer({
+      question:'Explain study habits',history:[],sources:[],
+      profile:{displayName:'Learner',customPrompt:'Prefer short examples',personalization:true},
+      style:'Short summary',kind:'chat',feedback:[],
+    });
+    assert.match(request.messages[0].content, /Prefer short examples/);
+  } finally {
+    if (previousKey === undefined) delete process.env.DEEPSEEK_API_KEY;
+    else process.env.DEEPSEEK_API_KEY = previousKey;
+  }
+});

@@ -1,3 +1,4 @@
+import { initStudyBuddyStudio } from "./studybuddy-studio.js";
 import * as Y from "yjs"; // Keep editable drafts in a conflict-safe local document.
 import { IndexeddbPersistence } from "y-indexeddb"; // Persist Yjs updates across offline reloads.
 import { marked } from "marked"; // Render readable Markdown answers.
@@ -288,7 +289,7 @@ async function openBuffer() {
     // Private mode can disable IndexedDB; keep this session usable in memory.
     try { await persistence.destroy(); } catch {}
     persistence = null;
-    console.info('StudySpace: persistent drafts unavailable; using memory until this tab closes.');
+    console.info('StudyBuddy: persistent drafts unavailable; using memory until this tab closes.');
   }
   $("question").value = drafts.get(chatId || "new") || ""; // Restore the current unsent draft.
 } // Finish buffer initialization.
@@ -390,7 +391,7 @@ async function renewSession() {
         // Set the method option for this operation.
         method: "POST",
         // Set the headers option for this operation.
-        headers: { "Content-Type": "application/json", "X-StudySpace-Environment": APP_ENV },
+        headers: { "Content-Type": "application/json", "X-StudyBuddy-Environment": APP_ENV },
         // Set the body option for this operation.
         body: JSON.stringify({ refreshToken }),
         // Set the signal option for this operation.
@@ -444,7 +445,7 @@ async function api(path, options = {}) {
         "Content-Type": "application/json",
         // Set the Authorization option for this operation.
         Authorization: `Bearer ${token}`,
-        "X-StudySpace-Environment": APP_ENV,
+        "X-StudyBuddy-Environment": APP_ENV,
         // Continue the current transformation.
         ...options.headers,
       // Close the current expression or block.
@@ -523,6 +524,9 @@ function changeTab(tab) {
     // Set the resources option for this operation.
     resources: "Resource hub",
     library: "My library",
+    word: "Word studio",
+    slides: "Slide studio",
+    flashcards: "Flashcards",
   }[tab]; // Update the breadcrumb.
   document.querySelectorAll('[data-tab]').forEach((button) => {
     if (button.dataset.tab === tab) button.setAttribute('aria-current', 'page');
@@ -661,6 +665,7 @@ function renderChats() {
     // Run $ with the arguments below.
     $("chat-list").append(button);
   }); // Attach ownership-scoped chat navigation.
+  window.dispatchEvent(new CustomEvent("studybuddy:chats-rendered"));
 } // Finish history rendering.
 // Cache the history index for offline navigation.
 // Supply this expression to the enclosing operation.
@@ -1265,6 +1270,7 @@ function showArtifact(artifact, kind) {
       // Run $ with the arguments below.
       $("artifact-content").append(node);
     }); // Render safe structured chapters or slide notes.
+  if (window.studybuddyOpenArtifact?.(artifact, kind)) return;
   if (!$("artifact-dialog").open) $("artifact-dialog").showModal(); // Avoid reopening an already active modal.
 } // Finish artifact previews.
 // Render an answer with inspectable evidence and specific feedback controls.
@@ -1274,7 +1280,7 @@ function renderAnswer(result, id, sample = false) {
   // Initialize node for the current operation.
   // Initialize node for the current operation.
   const node = element("article", "message assistant");
-  node.append(element("div", "message-label", "✦ STUDYSPACE")); // Label the assistant contribution.
+  node.append(element("div", "message-label", "✦ STUDYBUDDY")); // Label the assistant contribution.
   // Apply the following behavior only when its condition matches.
   // Apply the following behavior only when its condition matches.
   if (sample)
@@ -1520,20 +1526,6 @@ async function generate(kind, question) {
   await ensureChat();
   // Apply the following behavior only when its condition matches.
   // Apply the following behavior only when its condition matches.
-  if (!sources.length) {
-    // Run openSources with the arguments below.
-    // Run openSources with the arguments below.
-    openSources();
-    // Stop this operation with a clear failure.
-    // Stop this operation with a clear failure.
-    throw new Error(
-      // Require evidence before generation.
-      // Close the current expression or block.
-      "Add a source first so the answer can be grounded in your material.",
-      // Close the current expression or block.
-    // Close the current expression or block.
-    );
-  } // Require evidence before generation.
   // Supply this expression to the enclosing operation.
   // Run $ with the arguments below.
   busy = true;
@@ -2025,7 +2017,7 @@ document.querySelectorAll("[data-export]").forEach((button) =>
       anchor.href = url;
       // Supply this expression to the enclosing operation.
       // Run anchor.click with the arguments below.
-      anchor.download = `${currentArtifact.title.replace(/[^a-zA-Z0-9 -]/g, "").slice(0, 70) || "StudySpace"}.${format}`;
+      anchor.download = `${currentArtifact.title.replace(/[^a-zA-Z0-9 -]/g, "").slice(0, 70) || "StudyBuddy"}.${format}`;
       // Run anchor.click with the arguments below.
       // Run anchor.click with the arguments below.
       anchor.click();
@@ -2045,6 +2037,15 @@ document.querySelectorAll("[data-export]").forEach((button) =>
 // Initialize resources for the current operation.
 // Initialize resources for the current operation.
 const resources = [
+  {"name": "POLITEMall", "subject": "ITE & Polytechnic", "description": "Online learning from Singapore ITE and five polytechnics. Some content requires campus login.", "url": "https://politemall.polite.edu.sg/", "publisher": "ITE + five polytechnics"},
+  {"name": "MOE Student Learning Space", "subject": "MOE", "description": "MOE Library and self-study resources for eligible students; account access may be required.", "url": "https://www.learning.moe.edu.sg/students/student-user-guide/discover/", "publisher": "Ministry of Education Singapore"},
+  {"name": "ITE Applied Learning", "subject": "ITE", "description": "ITE applied learning modules, including IT, engineering and cybersecurity.", "url": "https://www.ite.edu.sg/secondary-school-students/applied-learning-modules/modules/", "publisher": "Institute of Technical Education"},
+  {"name": "ITE Career Resources", "subject": "ITE & career", "description": "Career guidance, job skills and employment resources for ITE students and graduates.", "url": "https://www.ite.edu.sg/alumni/career-guidance-and-services/career-guidance/", "publisher": "Institute of Technical Education"},
+  {"name": "POLITE Technology Resources", "subject": "Polytechnic & ITE", "description": "Discover technology facilities and specialist expertise from polytechnics and ITE.", "url": "https://techresources.polite.edu.sg/", "publisher": "ITE and five polytechnics"},
+  {"name": "SkillsFuture Singapore", "subject": "Work skills", "description": "Training pathways, continuing education, career planning and workforce skills.", "url": "https://www.myskillsfuture.gov.sg/", "publisher": "SkillsFuture Singapore"},
+  {"name": "SkillsFuture Official Answers", "subject": "Work skills", "description": "Official programme and course application questions and answers.", "url": "https://ask.gov.sg/skillsfuture", "publisher": "Singapore Government"},
+  {"name": "Applied Learning Module Portal", "subject": "ITE & Polytechnic", "description": "Browse applied learning modules from ITE and Singapore polytechnics.", "url": "https://www.myskillsfuture.gov.sg/content/student/en/aplm.html", "publisher": "SkillsFuture Singapore"},
+
   // Supply this expression to the enclosing operation.
   // Set the name option for this operation.
   {
@@ -2329,7 +2330,7 @@ document.querySelectorAll("[data-auth-mode]").forEach((tab) => {
   });
   $("auth-title").textContent = signingUp ? "Make space for learning" : "Welcome back!";
   $("auth-subtitle").textContent = signingUp ? "Create your account and keep every bright idea." : "Pick up right where you left off.";
-  $("auth-submit").innerHTML = signingUp ? 'Create my account <span aria-hidden="true">→</span>' : 'Log in to StudySpace <span aria-hidden="true">→</span>';
+  $("auth-submit").innerHTML = signingUp ? 'Create my account <span aria-hidden="true">→</span>' : 'Log in to StudyBuddy <span aria-hidden="true">→</span>';
   $("password").autocomplete = signingUp ? "new-password" : "current-password";
   $("password").minLength = signingUp ? 12 : 1;
   $("auth-password-hint").hidden = !signingUp;
@@ -2390,7 +2391,7 @@ $("account-form").addEventListener(
       method: "POST",
       // Set the headers option for this operation.
       // Set the headers option for this operation.
-      headers: { "Content-Type": "application/json", "X-StudySpace-Environment": APP_ENV },
+      headers: { "Content-Type": "application/json", "X-StudyBuddy-Environment": APP_ENV },
       // Set the body option for this operation.
       // Set the body option for this operation.
       body: JSON.stringify({
@@ -2543,7 +2544,7 @@ async function connect() {
   profile = await api("/profile");
   // Run $ with the arguments below.
   // Run $ with the arguments below.
-  $("account-name").textContent = profile.name;
+  $("account-name").textContent = profile.displayName || profile.name;
   // Run $ with the arguments below.
   // Run $ with the arguments below.
   $("account-state").textContent = "Supabase workspace";
@@ -2583,6 +2584,7 @@ async function connect() {
   // Wait for this asynchronous operation before continuing.
   // Wait for this asynchronous operation before continuing.
   await refreshChats();
+  window.dispatchEvent(new Event("studybuddy:chats-updated"));
   // Apply the following behavior only when its condition matches.
   // Apply the following behavior only when its condition matches.
   if (chats.length) await loadChat(chats[0].id);
@@ -2721,6 +2723,8 @@ $("settings-open").addEventListener("click", () => {
   // Run $ with the arguments below.
   // Run $ with the arguments below.
   $("preferences").value = profile.preferences || "";
+  $("display-name").value = profile.displayName || "";
+  $("custom-prompt").value = profile.customPrompt || "";
   // Run $ with the arguments below.
   // Run $ with the arguments below.
   $("learned-topics").textContent = profile.personalization
@@ -2774,6 +2778,8 @@ $("settings-form").addEventListener(
       // Set the preferences option for this operation.
       // Set the preferences option for this operation.
       preferences: $("preferences").value,
+      displayName: $("display-name").value.trim(),
+      customPrompt: $("custom-prompt").value.trim(),
       // Close the current expression or block.
     // Close the current expression or block.
     };
@@ -2792,6 +2798,7 @@ $("settings-form").addEventListener(
     // Run renderProgress with the arguments below.
     // Run renderProgress with the arguments below.
     renderProgress();
+    $("account-name").textContent = profile.displayName || profile.name || "Your workspace";
     // Run $ with the arguments below.
     // Run $ with the arguments below.
     $("settings-dialog").close();
@@ -3219,3 +3226,11 @@ if ("serviceWorker" in navigator)
   navigator.serviceWorker.register(`${(import.meta.env.BASE_URL || "/").replace(/\/?$/, "/")}sw.js`, { scope: (import.meta.env.BASE_URL || "/").replace(/\/?$/, "/") }).catch(() => {}); // Cache only the static app shell for offline reopening.
 
 
+
+// Keep the independent studios and folder UI wired to the existing authenticated API.
+initStudyBuddyStudio({
+  api, generate, toast, ensureChat, changeTab,
+  getChats: () => chats, getCurrentChatId: () => chatId,
+  getToken: () => token, refreshChats,
+  toHtml: markdown,
+});
