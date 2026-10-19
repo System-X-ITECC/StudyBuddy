@@ -17,6 +17,8 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    environment: 
+      name: production
 
     env:
       PUBLIC_APP_ENV: ${{ vars.STUDYBUDDY_APP_ENV }}
