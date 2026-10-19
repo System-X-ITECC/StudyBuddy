@@ -47,6 +47,26 @@ test("independent API exports without SQLite or cloud credentials and reports se
     });
     assert.equal(anonymous.status, 401);
 
+    // A current StudyBuddy client must be able to reach auth middleware.
+    const currentClient = await fetch(`${base}/chats`, {
+      headers: { "X-StudyBuddy-Environment": "testbed" },
+    });
+    assert.equal(currentClient.status, 401);
+
+    // Mismatched and contradictory headers must remain rejected.
+    const wrongCurrentClient = await fetch(`${base}/chats`, {
+      headers: { "X-StudyBuddy-Environment": "production" },
+    });
+    assert.equal(wrongCurrentClient.status, 409);
+
+    const conflictingClient = await fetch(`${base}/chats`, {
+      headers: {
+        "X-StudyBuddy-Environment": "testbed",
+        "X-StudySpace-Environment": "production",
+      },
+    });
+    assert.equal(conflictingClient.status, 409);
+
     const login = await fetch(`${base}/login`, {
       method: "POST",
       headers: {

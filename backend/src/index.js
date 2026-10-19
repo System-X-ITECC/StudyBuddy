@@ -47,7 +47,10 @@ app.use(
 app.use("/api", (req, res, next) => {
   if (req.path === "/health") return next();
   const expected = process.env.APP_ENV || "testbed";
-  const incoming = req.get("X-StudySpace-Environment");
+  const current = req.get("X-StudyBuddy-Environment");
+  const legacy = req.get("X-StudySpace-Environment");
+  if (current && legacy && current !== legacy) return res.status(409).json({ error: "Conflicting environment headers." });
+  const incoming = current || legacy;
   if (incoming !== expected) return res.status(409).json({ error: `Wrong environment: expected ${expected}.` });
   next();
 });
