@@ -124,8 +124,11 @@ libraryRouter.post('/upload',raw({type:'application/octet-stream',limit:'10mb'})
   const info = fileInfo(name);
   if (!info || !name || name.length > 160 || /[\x00-\x1f/\\]/.test(name))
     return res.status(400).json({error:'Unsupported file. Choose an image, audio, video, or study document.'});
-  const body = req.body;
-  if (!Buffer.isBuffer(body) || !body.length || body.length > LIBRARY_FILE_LIMIT)
+  const rawBody = req.body;
+  if (!Buffer.isBuffer(rawBody))
+    return res.status(400).json({error:'Invalid upload body.'});
+  const body = rawBody;
+  if (!body.length || body.length > LIBRARY_FILE_LIMIT)
     return res.status(413).json({error:'Choose a file up to 10 MB.'});
   if (!matchesMediaSignature(info, body)) return res.status(400).json({error:'File contents do not match the selected format.'});
   const filename = `${randomUUID()}.${info.ext}`;
