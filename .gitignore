@@ -7,6 +7,7 @@ node_modules/
 **/.env.*
 **/.env.example
 **/.env.*.example
+!.env.github-pages.example
 .vercel/
 data/
 .astro/
@@ -17,11 +18,9 @@ dist/
 *.p12
 *.pfx
 *.sqlite*
-*.sql
 *.bak
 *.bak-*
 PATCH_FILES/
 .DS_Store
-supabase/
 *.ps1
 *.md
