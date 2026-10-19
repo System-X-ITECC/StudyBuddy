@@ -1,0 +1,28 @@
+{
+  "name": "studyspace-workspaces",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "scripts": {
+    "test": "npm test --workspace backend",
+    "test:environment": "node --test backend/test/environment.test.js",
+    "dev:testbed:frontend": "node scripts/run-profile.mjs testbed frontend dev",
+    "dev:testbed:backend": "node scripts/run-profile.mjs testbed backend dev",
+    "build:testbed": "node scripts/run-profile.mjs testbed frontend build",
+    "build:production": "node scripts/run-profile.mjs production frontend build",
+    "start:production:backend": "node scripts/run-profile.mjs production backend start",
+    "release:check": "npm run audit:security && npm test && npm run build:testbed && npm run build:budget && node scripts/release-check.mjs",
+    "check": "npm test",
+    "smoke:testbed": "node scripts/smoke-api.mjs http://localhost:8787 testbed",
+    "audit:security": "npm audit --audit-level=high",
+    "build:budget": "node scripts/asset-budget.mjs",
+    "test:hardening": "node --test backend/test/environment.test.js backend/test/release-hardening.test.js",
+    "check:demo": "node scripts/check-demo-deps.mjs"
+  }
+}

@@ -1,0 +1,284 @@
+:root{font-family:'DM Sans',sans-serif;color:#273a34;background:#fcfcf9;font-synthesis:none;--green:#2c5547;--muted:#818b83;--line:#e7e9e1;--paper:#fcfcf9} /* Define a calm, consistent visual system. */
+*{box-sizing:border-box} /* Keep widths predictable when padding is added. */
+body{margin:0} /* Remove default page margins. */
+button,input,textarea,select{font:inherit} /* Keep controls visually consistent with content. */
+button,a,input,textarea,select{-webkit-tap-highlight-color:transparent} /* Avoid intrusive touch highlighting. */
+button{cursor:pointer;color:inherit} /* Indicate interactive actions. */
+button:disabled{cursor:wait;opacity:.55} /* Make pending actions visibly unavailable. */
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #86ad97;outline-offset:3px} /* Preserve accessible keyboard focus. */
+button{border:0;background:none} /* Let component classes define button surfaces. */
+svg{width:19px;height:19px;stroke-width:1.7;flex-shrink:0} /* Standardize lightweight interface icons. */
+.app-shell{display:grid;grid-template-columns:244px minmax(420px,1fr) 285px;height:100dvh;min-height:600px} /* Create the three-panel desktop workspace. */
+.sidebar{background:#f4f5ee;border-right:1px solid var(--line);padding:30px 18px 17px;display:flex;flex-direction:column;min-height:0} /* Keep navigation calm and vertically organized. */
+.brand{display:flex;gap:10px;align-items:center;text-decoration:none;color:#273c32;font-family:'Manrope',sans-serif;font-weight:800;font-size:24px;letter-spacing:-1px;padding:0 8px;margin-bottom:38px} /* Establish the typographic brand. */
+.brand-mark{background:var(--green);color:white;border-radius:12px;width:35px;height:35px;font-family:Georgia,serif;font-style:italic;font-size:31px;line-height:30px;text-align:center;position:relative} /* Build a compact logo without a raster asset. */
+.brand-mark span{font-size:13px;position:absolute;right:3px;top:-4px;color:#dbe9a8} /* Add a small learning spark. */
+.brand-dot{color:#84a065} /* Accent the brand punctuation. */
+.new-chat{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #d9dfd1;border-radius:9px;padding:12px 11px;font-weight:550;font-size:13px;box-shadow:0 2px 2px #283e3210;margin-bottom:29px} /* Make the primary navigation action easy to identify. */
+.new-chat span{margin-left:auto;color:#82907c} /* Align the action hint to the edge. */
+.nav-label{font-size:10px;letter-spacing:1.4px;font-weight:650;color:#92998d;margin:0 12px 12px} /* Distinguish navigation groups quietly. */
+.nav-item{display:flex;align-items:center;gap:11px;width:100%;padding:12px;border-radius:8px;margin:3px 0;text-align:left;font-size:13px;color:#697568} /* Size navigation targets for comfortable use. */
+.nav-item:hover,.nav-item.active{background:#e5eadb;color:#294b3d} /* Show current navigation and hover state. */
+.nav-item.active{font-weight:650} /* Emphasize the selected tab. */
+.nav-pill{margin-left:auto;font-size:9px;border:1px solid #ced7c2;padding:2px 5px;border-radius:4px;font-weight:400} /* Label the home destination subtly. */
+.tiny-dot{width:5px;height:5px;border-radius:50%;background:#91a16f;margin-left:auto} /* Add a small discovery cue. */
+.history-head{display:flex;align-items:center;margin-top:35px} /* Separate recent conversations from app navigation. */
+.history-head svg{margin-left:auto;margin-right:10px;width:13px;color:#92998d;align-self:flex-start} /* Align the history icon with its label. */
+.chat-list{overflow:auto;min-height:60px;padding:0 10px;flex:1} /* Allow long chat histories to scroll independently. */
+.chat-list button{display:block;font-size:12px;padding:10px 0;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;color:#677465} /* Keep conversation titles compact. */
+.chat-list button.active{font-weight:700;color:#294b3d} /* Identify the current conversation. */
+.sidebar-bottom{margin-top:20px} /* Keep account controls below navigation. */
+.learning-note{display:flex;gap:12px;align-items:center;padding:15px 12px;background:#edeedd;border:1px solid #e4e5d4;border-radius:10px;margin-bottom:18px} /* Add a soft branded learning note. */
+.learning-note>span{font-size:29px;color:#7d8e51} /* Emphasize the small decorative spark. */
+.learning-note p{font-size:11px;line-height:1.7;color:#768167;margin:0}.learning-note strong{font-weight:500;color:#546642} /* Keep the note understated and readable. */
+.account{border-top:1px solid var(--line);display:flex;align-items:center;gap:9px;width:100%;padding:17px 6px 0;margin-top:13px;text-align:left} /* Separate account controls from navigation. */
+.avatar{height:32px;width:32px;display:grid;place-items:center;border-radius:50%;background:#e3e7dc;color:#6b795b;font-family:Georgia,serif} /* Render a nonidentifying account avatar. */
+.account strong{font-size:11px;font-weight:600;display:block}.account small{font-size:10px;color:#8b9385;display:block;margin-top:3px}.account>svg{margin-left:auto;width:13px} /* Establish account text hierarchy. */
+.workspace{display:flex;flex-direction:column;min-width:0;min-height:0} /* Prevent the central workspace from overflowing its grid cell. */
+.topbar{height:76px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 32px;flex-shrink:0;font-size:12px} /* Provide a fixed workspace breadcrumb. */
+.breadcrumb{color:#8a948a}.slash{margin:0 14px;color:#bdc5b9}.topbar strong{font-weight:500} /* Keep the breadcrumb secondary to content. */
+.top-actions{display:flex;align-items:center;gap:16px}.status{font-size:10px;color:#828e7d;display:flex;gap:6px;align-items:center}.status>span{width:5px;height:5px;background:#9b9d85;border-radius:50%} /* Display the real connection status compactly. */
+.icon-button{padding:6px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px}.icon-button:hover{background:#eaf0e4} /* Provide consistent icon-only controls. */
+#main{flex:1;min-height:0;position:relative}.tab{display:none}.tab.active{display:block}#tab-chat.active{height:100%;display:flex;flex-direction:column} /* Show only the active workspace tab. */
+.chat-area{flex:1;overflow:auto;min-height:0;padding:0 38px}.welcome{max-width:780px;margin:0 auto;padding-top:clamp(48px,9vh,100px)} /* Center the first-use experience without crowding the composer. */
+.eyebrow{font-size:9px;letter-spacing:1.6px;font-weight:600;color:#819074;display:flex;align-items:center;gap:8px}.sparkle{font-size:23px;color:#7d946a} /* Use quiet editorial labels for section hierarchy. */
+h1{font-family:'Manrope',sans-serif;font-size:clamp(34px,3vw,48px);font-weight:500;line-height:1.24;letter-spacing:-1.8px;margin:21px 0 18px;color:#294236}h1 span{color:#899680} /* Create a distinctive, restrained hero heading. */
+.intro{font-size:13px;line-height:1.9;color:#82907e;margin-bottom:30px} /* Set comfortable supporting text spacing. */
+.quick-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:37px}.action-card{border:1px solid #e3e7dc;border-radius:12px;background:#fff;text-align:left;padding:18px 15px 21px;position:relative;transition:transform .15s,border-color .15s}.action-card:hover{transform:translateY(-3px);border-color:#b2c09e} /* Make starter actions tactile without heavy animation. */
+.tile-icon{width:35px;height:35px;display:inline-flex;align-items:center;justify-content:center;border-radius:9px;margin-bottom:19px}.sage{background:#edf1e4;color:#7c9663}.peach{background:#faece1;color:#b78b67}.lavender{background:#f0edf8;color:#9687b9}.yellow{background:#f7f0d8;color:#aa964a} /* Assign gentle colors to different learning activities. */
+.action-card strong{display:block;font-size:12px;font-weight:600;margin-bottom:7px}.action-card>span:not(.tile-icon){display:block;font-size:10px;color:#939b8f;line-height:1.5}.card-arrow{position:absolute;right:14px;top:20px;width:13px;color:#9eaa96} /* Keep card labels and supporting copy compact. */
+.example-link{font-size:10px;color:#929c87;margin-top:23px;padding:0}.example-link span{margin-left:8px} /* Keep the example opt-in and visually secondary. */
+.composer-wrap{padding:18px 38px 18px;margin:auto auto 0;width:100%;max-width:900px}.context-strip{display:flex;justify-content:space-between;font-size:10px;color:#8d9985;margin:0 4px 12px}.context-strip>span{display:flex;gap:5px;align-items:center}.context-strip svg{width:12px;height:12px}.context-strip button{font-size:10px;color:#718462} /* Keep the source boundary visible above the input. */
+.composer{border:1px solid #dce3d3;background:white;border-radius:14px;box-shadow:0 6px 20px #31492d07;padding:14px}.composer textarea{resize:none;border:0;outline:none;width:100%;font-size:12px;line-height:1.7;background:transparent;color:#314735}.composer textarea::placeholder{color:#a1aa99} /* Give the message composer a quiet elevated surface. */
+.composer-toolbar{display:flex;justify-content:space-between;align-items:center}.composer-toolbar>div{display:flex;align-items:center;gap:12px}.style-select{display:flex;align-items:center;gap:5px}.style-select svg{width:12px;color:#8c9980}.style-select select{border:0;background:none;font-size:10px;color:#809073;max-width:180px} /* Offer compact message-style controls. */
+#send{width:32px;height:32px;display:grid;place-items:center;background:#2c5140;color:white;border-radius:8px} /* Emphasize the send action. */
+.composer-note{display:flex;justify-content:space-between;font-size:9px;color:#a2aa9b;margin:10px 3px 0} /* Explain offline and AI behavior without distracting from writing. */
+.context-panel{border-left:1px solid var(--line);padding:30px 22px;display:flex;flex-direction:column;background:#fafbf7;min-height:0}.context-title{display:flex;align-items:center;gap:8px}.context-title h2{font-size:13px;font-weight:600;margin:0}.count{font-size:9px;background:#eff2e8;color:#8a987b;border-radius:5px;padding:2px 6px} /* Style the source-panel heading. */
+.muted{color:#899580}.small{font-size:11px;line-height:1.8}.source-button{border:1px dashed #cbd6bd;width:100%;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:6px;padding:11px;font-size:11px;color:#6d825b;margin-top:18px}.source-button svg{width:14px} /* Make adding evidence discoverable. */
+.source-empty{text-align:center;padding-top:52px}.paper-stack{position:relative;width:66px;height:72px;margin:auto}.paper-stack>svg{width:50px;height:60px;color:#b8c3ab;transform:rotate(-7deg);stroke-width:1}.paper-stack span{position:absolute;right:0;top:0;color:#9fae81;font-size:25px}.source-empty h3{font-size:11px;font-weight:500;color:#768969;margin:18px 0 10px}.source-empty p{font-size:10px;color:#a0aa96;line-height:1.9}.format-tags{font-size:8px;letter-spacing:1px;color:#a7b19e;display:block;margin-top:20px}.format-tags b{margin:0 4px;font-weight:400} /* Explain the empty evidence state with a simple paper motif. */
+.context-bottom{margin-top:auto;padding-top:20px}.private-note{display:flex;gap:9px;border-top:1px solid var(--line);padding-top:22px}.private-note>svg{width:14px;color:#8a9d79;margin-top:1px}.private-note strong{font-size:10px;font-weight:500;color:#7c8e6f}.private-note p{font-size:10px;line-height:1.7;color:#9aa58f;margin:6px 0 22px}.tip{background:#f0f3e8;border-radius:10px;padding:15px}.tip>span{font-size:8px;letter-spacing:.8px;color:#8c9a7c}.tip p{font-size:10px;color:#8c9a80;line-height:1.9;margin:9px 0 0}.tip strong{font-weight:500;color:#6e815e} /* Keep privacy and study guidance anchored below sources. */
+.source-list{overflow:auto;margin-top:15px}.source-item{display:flex;align-items:center;gap:8px;background:white;border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:8px;font-size:11px}.source-item>span{flex:1;overflow:hidden;text-overflow:ellipsis}.source-item small{display:block;color:#9aa68f;font-size:9px;margin-top:4px}.source-item button{font-size:14px;color:#8e9984} /* Render attached sources in compact, removable rows. */
+.tool-page{padding:46px 38px;overflow:auto;height:100%}.tool-page h1{font-size:38px}.tool-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:25px}.tool-card{padding:24px 20px;text-align:left;border:1px solid var(--line);border-radius:13px;background:white}.tool-card:hover{border-color:#a8b798;box-shadow:0 6px 20px #28402e06}.tool-card>svg{color:#81966b;width:24px;height:24px}.tool-card h3{font-size:14px;font-weight:550}.tool-card p{font-size:11px;line-height:1.8;color:#86957c}.tool-card>span:last-child{font-size:10px;color:#617951}.study-grid{grid-template-columns:repeat(2,1fr)}.tool-card .tile-icon{margin-bottom:4px} /* Give document and study tools a consistent card layout. */
+.drop-zone{width:100%;border:1px dashed #bbc9a9;border-radius:14px;padding:32px;display:flex;align-items:center;flex-direction:column;background:#f5f7ef;gap:13px}.drop-zone svg{width:30px;height:30px;color:#879d71}.drop-zone strong{font-size:13px;font-weight:500}.drop-zone span{font-size:10px;color:#96a189}.drop-zone.dragover{background:#e3ecd7} /* Provide a visible drag-and-drop target. */
+.info-banner{display:flex;gap:10px;font-size:11px;line-height:1.8;color:#8b987f;margin-top:25px}.progress-panel{display:flex;align-items:center;justify-content:space-between;background:#eef2e6;border-radius:14px;padding:25px;margin-top:25px}.progress-panel h3{font-size:17px;font-weight:500}.progress-panel p{font-size:11px;color:#8b997e}.progress-emblem{font-size:66px;color:#a3b78a} /* Present limitations and progress in low-pressure panels. */
+.resource-search{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:white;border-radius:9px;padding:10px 13px}.resource-search input{width:100%;border:0;background:none;outline:none;font-size:12px}.resource-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin:24px 0}.resource-card{border:1px solid var(--line);border-radius:12px;padding:20px;background:white}.resource-card small{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#90a07f}.resource-card h3{font-size:14px;font-weight:550}.resource-card p{font-size:11px;line-height:1.8;color:#8b987f}.resource-card a,.resource-card button{font-size:10px;color:#5e7a4c;text-decoration:none;margin-right:10px;padding:0}.resource-card button{font-weight:600} /* Make curated sources easy to scan and filter. */
+.messages{max-width:780px;margin:auto;padding-top:25px}.message{margin:0 0 25px;font-size:13px;line-height:1.9}.message.user{background:#eef2e7;border-radius:12px;padding:14px 18px;margin-left:12%}.message.assistant{padding:6px 0}.message-label{font-size:9px;letter-spacing:1.1px;color:#899d76;font-weight:600;margin-bottom:10px}.message h1,.message h2,.message h3{font-family:inherit;font-size:16px;line-height:1.5;letter-spacing:0;margin:16px 0 8px}.message p{margin:8px 0}.message pre{overflow:auto;background:#f0f2ea;padding:12px;border-radius:8px}.message a{color:#416d4e}.message table{border-collapse:collapse;width:100%}.message td,.message th{border:1px solid var(--line);padding:6px}.message-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.message-tools button{font-size:10px;border:1px solid var(--line);border-radius:6px;padding:5px 9px;color:#80926f}.citation{border-top:1px solid var(--line);padding:8px 0;font-size:10px;color:#80926f}.citation summary{cursor:pointer}.citation p{white-space:pre-wrap;max-height:180px;overflow:auto;color:#627258}.sample-tag{font-size:9px;letter-spacing:1px;color:#9a8861;background:#f6f0df;padding:4px 8px;border-radius:4px;display:inline-block;margin-bottom:12px} /* Render safe Markdown answers, evidence, and feedback controls. */
+dialog{border:1px solid #dce3d4;border-radius:16px;padding:27px;width:min(490px,calc(100vw - 30px));color:#334a38;background:#fcfcf9;max-height:88dvh;overflow:auto;box-shadow:0 20px 80px #1f352430}dialog::backdrop{background:#1f352450;backdrop-filter:blur(3px)}.dialog-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:12px}.dialog-head h2{font-size:20px;font-weight:550;margin:0;letter-spacing:-.5px}dialog label{display:block;font-size:11px;color:#75896a;margin:15px 0}dialog input:not([type=checkbox]),dialog textarea,dialog select{display:block;width:100%;padding:11px;border:1px solid #dce3d3;border-radius:7px;margin-top:7px;background:white;color:#334a38;font-size:12px}dialog .check-label{display:flex;gap:9px;align-items:center}dialog p{font-size:12px;line-height:1.8}.primary,.secondary,.danger{border-radius:8px;padding:11px 16px;font-size:12px;margin-top:8px}.primary{background:#2d5544;color:white}.secondary{border:1px solid #dce3d3;background:#f5f7ef}.danger{color:#a56d62;border:1px solid #e8d8d2;background:#fcf6f2}.full{width:100%}.divider{text-align:center;font-size:10px;color:#9aa68e;margin:22px 0}.wide-dialog{width:min(800px,calc(100vw - 30px))}.export-bar{display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line);padding:12px 0 20px;font-size:11px;color:#8b9b7e}.export-bar span{margin-right:auto}.export-bar button{border:1px solid var(--line);border-radius:6px;padding:6px;background:white}.artifact-section{font-size:13px;line-height:1.9}.artifact-section h3{font-size:17px;font-weight:550}.flashcard{border:1px solid #dce4d2;padding:30px;border-radius:14px;background:#f2f5eb;text-align:center;min-height:170px;margin:20px 0}.flashcard p{font-size:17px}.flashcard small{font-size:10px;color:#879a73}.flashcard-controls{display:flex;gap:10px;justify-content:center}.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);max-width:min(600px,90vw);padding:15px 20px;border-radius:10px;background:#2c4938;color:white;font-size:12px;line-height:1.6;box-shadow:0 8px 30px #0002;z-index:100}.toast[hidden]{display:none} /* Style accessible dialogs, study previews, and status announcements. */
+@media(min-width:1600px){.welcome{padding-top:12vh}.app-shell{grid-template-columns:260px minmax(420px,1fr) 310px}.chat-area,.composer-wrap{padding-left:60px;padding-right:60px}} /* Use available space gracefully on large displays. */
+@media(max-width:1200px){.app-shell{grid-template-columns:215px minmax(400px,1fr)}.context-panel{display:none}.context-panel.mobile-open{display:flex;position:fixed;right:0;top:76px;bottom:0;width:285px;z-index:20;box-shadow:-10px 0 35px #233a2510}.sidebar{padding-left:12px;padding-right:12px}.brand{font-size:23px}.tool-grid{grid-template-columns:repeat(2,1fr)}} /* Collapse sources into an optional overlay on narrower desktops. */
+@media(max-width:760px){.app-shell{grid-template-columns:68px minmax(0,1fr);min-height:100dvh}.sidebar{padding:20px 8px}.brand{padding:0;margin-bottom:25px;justify-content:center}.brand>span:last-child,.nav-label,.history-head,.chat-list,.learning-note,.account>span:not(.avatar),.account>svg,.nav-pill,.tiny-dot{display:none}.new-chat{font-size:0;justify-content:center;padding:10px}.new-chat>span{display:none}.nav-item{font-size:0;justify-content:center;padding:13px;gap:0}.nav-item svg{width:21px}.sidebar-bottom{margin-top:auto}.account{justify-content:center}.topbar{height:62px;padding:0 18px}.status{font-size:8px;max-width:120px}.chat-area{padding:0 20px}.welcome{padding-top:38px}h1{font-size:34px}.intro{font-size:11px}.eyebrow{font-size:8px;letter-spacing:1px}.quick-actions{grid-template-columns:1fr;gap:8px;margin-top:25px}.action-card{padding:12px 12px 12px 56px;min-height:65px}.action-card .tile-icon{position:absolute;left:11px;top:14px;width:30px;height:30px;margin:0}.action-card strong{font-size:11px}.card-arrow{top:15px}.example-link{font-size:9px;margin:16px 0 10px}.composer-wrap{padding:13px 16px}.composer-note{font-size:8px;gap:15px;line-height:1.5}.composer textarea{font-size:11px}.context-strip{font-size:8px}.context-strip button{font-size:8px}.tool-page{padding:30px 20px}.tool-page h1{font-size:30px}.tool-grid,.resource-grid{grid-template-columns:1fr}.tool-card{padding:20px}.drop-zone{padding:25px 15px}.drop-zone span{font-size:8px;text-align:center}.context-panel.mobile-open{top:62px}.message{font-size:12px}.export-bar{flex-wrap:wrap}.export-bar span{width:100%}} /* Preserve all core actions on mobile without a cramped three-column layout. */
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}} /* Respect reduced-motion preferences. */
+
+/* ---------- Adaptive layout: small laptops, tablets and touch phones ---------- */
+html { height: 100%; }
+body { min-width: 0; min-height: 100%; overscroll-behavior: none; }
+.app-shell { min-width: 0; min-height: 0; overflow: hidden; }
+.app-shell.sources-collapsed { grid-template-columns: 244px minmax(0, 1fr); }
+.app-shell.sources-collapsed .context-panel { display: none; }
+#main, .chat-area, .messages, .tab, .tool-page, .source-list { min-width: 0; }
+#main { overflow: hidden; }
+.chat-area { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+.tool-page { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+.messages { overflow-wrap: anywhere; }
+.messages img, #artifact-content img { display: block; max-width: 100%; height: auto; }
+.messages pre, #artifact-content pre { max-width: 100%; overflow-x: auto; }
+.messages table, #artifact-content table { display: block; width: 100%; max-width: 100%; overflow-x: auto; white-space: normal; }
+.messages td, .messages th { min-width: 80px; }
+.messages a, .source-item { overflow-wrap: anywhere; }
+.composer textarea { min-height: 36px; max-height: 28dvh; overflow-y: auto; }
+.composer-wrap { flex-shrink: 0; }
+.mobile-bottom-nav, .mobile-menu, .sidebar-mobile-header, .drawer-close { display: none; }
+.drawer-backdrop { position: fixed; inset: 0; z-index: 49; background: rgba(25, 47, 35, .37); border: 0; border-radius: 0; width: 100%; height: 100%; cursor: default; }
+.drawer-backdrop[hidden] { display: none !important; }
+.topbar-location { display: flex; align-items: center; min-width: 0; }
+.top-actions { flex-shrink: 0; }
+.sources-toggle { min-width: 44px; min-height: 44px; }
+.sidebar-mobile-header { align-items: center; justify-content: space-between; }
+.context-title .drawer-close { margin-left: auto; }
+@media (min-width: 1600px) {
+  .app-shell.sources-collapsed { grid-template-columns: 260px minmax(0, 1fr); }
+}
+@media (max-width: 1200px) {
+  .app-shell { grid-template-columns: 215px minmax(0, 1fr); }
+  .context-panel.mobile-open {
+    display: flex; position: fixed; z-index: 60;
+    right: 0; left: auto; top: 0; bottom: 0;
+    width: min(390px, 92vw); height: 100dvh;
+    padding: max(22px, env(safe-area-inset-top)) 22px max(22px, env(safe-area-inset-bottom));
+    overflow-y: auto; box-shadow: -15px 0 45px #1f352433;
+  }
+  .app-shell.sources-collapsed .context-panel.mobile-open { display: flex; }
+  .context-panel .drawer-close { display: inline-flex; min-width: 44px; min-height: 44px; }
+  .tool-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+  .app-shell, .app-shell.sources-collapsed {
+    display: grid; grid-template-columns: minmax(0, 1fr);
+    height: 100dvh; min-height: 0;
+  }
+  .workspace { width: 100%; min-width: 0; min-height: 0; }
+  .topbar { height: 60px; padding: 0 16px; }
+  .mobile-menu { display: inline-flex; min-width: 44px; min-height: 44px; margin-right: 8px; }
+  .topbar .breadcrumb, .topbar .slash { display: none; }
+  #page-name { font-size: 14px; font-weight: 700; color: #385647; }
+  .sidebar {
+    display: flex; position: fixed; z-index: 60;
+    inset: 0 auto 0 0; width: min(322px, 88vw);
+    height: 100dvh; padding: max(18px, env(safe-area-inset-top)) 17px max(15px, env(safe-area-inset-bottom));
+    overflow-y: auto; visibility: hidden;
+    transform: translateX(-105%); transition: transform .2s ease, visibility .2s;
+    box-shadow: 15px 0 45px #1f352422;
+  }
+  .sidebar.drawer-open { visibility: visible; transform: translateX(0); }
+  .sidebar-mobile-header { display: flex; flex-shrink: 0; margin-bottom: 16px; font-size: 11px; font-weight: 650; letter-spacing: .4px; color: #82907c; }
+  .sidebar-mobile-header .drawer-close { display: inline-flex; width: 44px; height: 44px; }
+  /* Restore full labels, history and settings inside the slide-out drawer. */
+  .sidebar .brand { padding: 0 8px; margin-bottom: 24px; justify-content: flex-start; font-size: 23px; }
+  .sidebar .brand>span:last-child, .sidebar .nav-label, .sidebar .history-head,
+  .sidebar .chat-list, .sidebar .learning-note, .sidebar .account>span:not(.avatar),
+  .sidebar .account>svg, .sidebar .nav-pill, .sidebar .tiny-dot { display: revert; }
+  .sidebar .history-head { display: flex; }
+  .sidebar .chat-list { display: block; flex: 1; min-height: 50px; }
+  .sidebar .learning-note { display: flex; }
+  .sidebar .account>span:not(.avatar) { display: block; min-width: 0; }
+  .sidebar .account>svg { display: block; }
+  .sidebar .new-chat { font-size: 13px; justify-content: flex-start; padding: 12px 11px; min-height: 44px; }
+  .sidebar .new-chat>span { display: inline; }
+  .sidebar .nav-item { font-size: 13px; justify-content: flex-start; gap: 11px; min-height: 44px; padding: 12px; }
+  .sidebar .nav-item svg { width: 19px; }
+  .sidebar .account { justify-content: flex-start; min-height: 52px; }
+  .sidebar .sidebar-bottom { margin-top: 15px; }
+  .mobile-bottom-nav {
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: stretch;
+    flex-shrink: 0; min-width: 0; height: calc(65px + env(safe-area-inset-bottom));
+    padding: 4px max(8px, env(safe-area-inset-right)) env(safe-area-inset-bottom) max(8px, env(safe-area-inset-left));
+    border-top: 1px solid #e0e8dc; background: #fafbf7;
+    box-shadow: 0 -6px 22px #263c2a0a; z-index: 10;
+  }
+  .mobile-nav-button {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px; min-width: 0; min-height: 48px; border-radius: 10px;
+    color: #7a8778; font-size: 10px; font-weight: 600; line-height: 1.2;
+  }
+  .mobile-nav-button svg { width: 21px; height: 21px; }
+  .mobile-nav-button span { white-space: nowrap; }
+  .mobile-nav-button.active, .mobile-nav-button[aria-current='page'] { background: #e7eddf; color: #305441; }
+  .mobile-nav-button:active { background: #dce7d4; }
+  #main { min-height: 0; }
+  #tab-chat.active { min-height: 0; }
+  .chat-area { padding: 0 24px; }
+  .composer-wrap { width: 100%; max-width: 900px; padding: 12px 24px 13px; }
+  .welcome { padding-top: clamp(22px, 6vh, 64px); }
+  .quick-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .quick-actions .action-card:last-child { grid-column: 1 / -1; }
+  .tool-page { padding: 28px 24px 36px; }
+}
+@media (max-width: 600px) {
+  .topbar { height: 54px; padding: 0 9px; }
+  .top-actions { gap: 5px; }
+  .status { max-width: 135px; font-size: 10px; line-height: 1.3; }
+  .mobile-menu { margin-right: 3px; }
+  .chat-area { padding: 0 16px; }
+  .welcome { padding-top: 22px; }
+  .welcome h1 { font-size: clamp(29px, 8.7vw, 38px); margin: 14px 0 10px; letter-spacing: -1.2px; }
+  .welcome .intro { font-size: 13px; line-height: 1.6; margin-bottom: 18px; }
+  .welcome .intro br, .tool-page .intro br { display: none; }
+  .eyebrow { font-size: 9px; letter-spacing: .65px; line-height: 1.5; }
+  .quick-actions { grid-template-columns: 1fr; gap: 9px; margin-top: 18px; }
+  .quick-actions .action-card:last-child { grid-column: auto; }
+  .action-card { min-height: 69px; padding: 13px 38px 12px 60px; }
+  .action-card .tile-icon { width: 36px; height: 36px; left: 12px; top: 15px; }
+  .action-card strong { font-size: 13px; margin-bottom: 5px; }
+  .action-card>span:not(.tile-icon) { font-size: 11px; }
+  .example-link { font-size: 11px; line-height: 1.5; text-align: left; padding: 6px 0; }
+  .composer-wrap { padding: 7px 12px 9px; }
+  .context-strip { font-size: 10px; margin: 0 5px 7px; gap: 10px; align-items: center; }
+  .context-strip button { font-size: 11px; min-height: 32px; }
+  .context-strip span { min-width: 0; }
+  .composer { padding: 10px 11px; border-radius: 13px; }
+  .composer textarea { font-size: 16px; line-height: 1.45; min-height: 36px; }
+  .composer-toolbar>div { min-width: 0; gap: 7px; }
+  .composer-toolbar .icon-button, #send { min-width: 44px; min-height: 44px; }
+  .composer-toolbar .style-select { min-width: 0; }
+  .style-select select { min-width: 0; max-width: min(43vw, 185px); font-size: 12px; }
+  .composer-note { font-size: 9px; line-height: 1.4; flex-wrap: wrap; gap: 2px 12px; margin-top: 6px; }
+  .composer-note span:last-child { display: none; }
+  .messages { padding-top: 18px; }
+  .message { font-size: 14px; line-height: 1.7; margin-bottom: 18px; }
+  .message.user { margin-left: 7%; padding: 12px; }
+  .message-label { font-size: 10px; }
+  .message-tools button { min-height: 35px; padding: 8px 10px; font-size: 11px; }
+  .tool-page { padding: 24px 16px 36px; }
+  .tool-page h1 { font-size: clamp(28px, 8vw, 36px); }
+  .tool-page .intro { font-size: 13px; line-height: 1.6; }
+  .tool-grid, .study-grid, .resource-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .tool-card { padding: 18px 16px; min-height: 132px; }
+  .tool-card h3, .resource-card h3 { font-size: 15px; }
+  .tool-card p, .resource-card p { font-size: 12px; }
+  .drop-zone { padding: 24px 12px; min-height: 152px; }
+  .drop-zone strong { font-size: 13px; }
+  .drop-zone span { font-size: 11px; line-height: 1.5; }
+  .progress-panel { gap: 12px; padding: 16px; }
+  .progress-emblem { font-size: 40px; }
+  .resource-card { padding: 16px; }
+  .resource-card a, .resource-card button { display: inline-flex; align-items: center; min-height: 38px; font-size: 12px; }
+  dialog { width: calc(100% - 20px); max-width: 490px; max-height: calc(100dvh - 20px); padding: 18px; border-radius: 14px; }
+  dialog input:not([type=checkbox]), dialog textarea, dialog select { font-size: 16px; }
+  dialog .primary, dialog .secondary, dialog .danger { min-height: 44px; font-size: 13px; }
+  .dialog-head h2 { font-size: 18px; }
+  .dialog-head .icon-button { min-width: 44px; min-height: 44px; }
+  .export-bar { gap: 6px; }
+  .export-bar span { width: 100%; }
+  .export-bar button { min-height: 40px; padding: 8px 12px; }
+  .flashcard { padding: 20px 12px; }
+  .flashcard-controls { flex-wrap: wrap; }
+  .toast { bottom: calc(74px + env(safe-area-inset-bottom)); font-size: 12px; width: min(450px, calc(100% - 24px)); }
+}
+@media (max-width: 380px) {
+  .status { max-width: 95px; font-size: 9px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .mobile-nav-button { font-size: 9px; }
+  .mobile-bottom-nav { padding-left: 3px; padding-right: 3px; }
+  #page-name { font-size: 13px; }
+  .context-strip { font-size: 9px; }
+  .style-select select { max-width: 37vw; }
+  .composer-note { font-size: 8px; }
+}
+@media (max-height: 570px) and (max-width: 900px) {
+  .welcome { padding-top: 14px; }
+  .welcome h1 { margin-top: 10px; margin-bottom: 8px; }
+  .quick-actions { margin-top: 14px; }
+  .composer-wrap { padding-top: 5px; padding-bottom: 5px; }
+  .mobile-bottom-nav { height: calc(58px + env(safe-area-inset-bottom)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sidebar { transition: none; }
+}
+
+@media (min-width: 700px) and (max-width: 900px) {
+  .quick-actions { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .quick-actions .action-card:last-child { grid-column: auto; }
+}
+
+/* Clearly distinguish isolated test-bed builds from production deployments. */
+.environment-badge { font-size: .65rem; letter-spacing: .075em; font-weight: 800; padding: .35rem .55rem; border-radius: 999px; border: 1px solid #eabf74; background: #fff4d9; color: #83530b; white-space: nowrap; }
+.environment-badge[data-mode="production"] { border-color: #9bcbb0; background: #ebf8ef; color: #216444; }
+@media(max-width: 480px) { .environment-badge { font-size: .58rem; padding: .25rem .4rem; } }
+
+/* Friendly authentication card. The public API URL is configured at build time. */
+.auth-dialog{width:min(440px,calc(100vw - 24px));padding:22px 26px 18px;border:1px solid #e5eadf;border-radius:26px;background:linear-gradient(160deg,#fffefa,#f8faf3);box-shadow:0 25px 95px #243e2e38}
+.auth-head{margin:0;min-height:32px}.auth-head .icon-button{margin-left:auto}.auth-sparkle{color:#e3a6bb;font-size:23px}
+.auth-welcome{text-align:center;margin:0 0 19px}.auth-illustration{font-size:26px;color:#d8aac1;padding:5px 0 8px}.auth-illustration span{font-size:35px}.auth-welcome h2{font-size:25px;letter-spacing:-.7px;line-height:1.2;margin:3px 0 8px;color:#284f40}.auth-welcome p{margin:0;font-size:13px;color:#738877;line-height:1.55}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:5px;border-radius:15px;background:#eef3ea;margin:12px 0 14px}.auth-tab{border:0;background:transparent;padding:12px;font-size:14px;border-radius:11px;color:#71856e;font-weight:650;cursor:pointer;min-height:44px}.auth-tab.active{background:#fff;color:#295744;box-shadow:0 2px 12px #244b2c12}.auth-tab:focus-visible{outline:2px solid #367c64;outline-offset:2px}
+.auth-form label{margin:12px 0;color:#526e5a;font-weight:550;font-size:12px}.auth-form input:not([type=checkbox]){border-radius:12px;padding:13px 14px;margin-top:7px;min-height:48px;font-size:15px;background:#fff}.auth-form input:focus{outline:2px solid #89b5a0;outline-offset:1px;border-color:#82ab94}.auth-submit{min-height:49px;border-radius:13px;font-size:14px;font-weight:650;margin:15px 0 0;display:flex;justify-content:center;align-items:center;gap:12px}.auth-hint{color:#768b78;font-size:11px!important;margin:0}.auth-feedback{color:#9b4053;font-size:12px!important;background:#fff2f3;border:1px solid #f1d1d8;padding:9px 12px;border-radius:10px}.auth-signed-in p{font-size:13px;text-align:center}.auth-footer{text-align:center;font-size:11px!important;color:#8a9b86;margin:19px 0 0}.auth-dialog [hidden]{display:none!important}
+@media(max-width:480px){.auth-dialog{padding:16px 20px 18px;border-radius:21px;max-height:calc(100dvh - 24px)}.auth-welcome h2{font-size:22px}.auth-form input:not([type=checkbox]){font-size:16px}}
+
+/* Production: system fonts avoid render-blocking third-party font downloads. */
+:root{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.brand,.study-guide h2,.welcome h1,.tool-page h1{font-family:inherit}
+/* Skip layout and paint for offscreen collection cards. Maintain a stable estimated footprint. */
+.library-card{content-visibility:auto;contain-intrinsic-size:auto 180px}
+/* Avoid movement-inducing animation and provide a clear keyboard focus treatment. */
+@media(prefers-reduced-motion:reduce){html:focus-within{scroll-behavior:auto}}
+
+/* Feature gate: clear affordance instead of a broken PPTX action. */
+.export-bar .demo-disabled-export{opacity:.55;cursor:not-allowed;border-style:dashed;box-shadow:none}.export-bar .demo-disabled-export:focus-visible{outline:2px solid #6a9779;outline-offset:3px}

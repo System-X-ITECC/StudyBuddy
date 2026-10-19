@@ -1,0 +1,169 @@
+---
+import '../styles/app.css';
+import '../styles/appearance-guide.css';
+import '../styles/library.css'; // Load the shared responsive workspace stylesheet.
+const publicBase = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+---
+<!doctype html> <!-- Render a static, standards-based document. -->
+<html lang="en"> <!-- Set the interface language for assistive technology. -->
+<head> <!-- Define page metadata before the interface. -->
+<meta charset="UTF-8" /> <!-- Support international document titles and notes. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" /> <!-- Fit mobile and desktop viewports. -->
+<meta name="theme-color" content="#fcfcf9" id="browser-theme-color" />
+<script is:inline>
+  // Apply the saved browser appearance before the application paints.
+  try {
+    const saved = localStorage.getItem('studyspace-appearance');
+    const dark = saved === 'dark' || (saved !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    document.querySelector('#browser-theme-color').content = dark ? '#111b18' : '#fcfcf9';
+  } catch { document.documentElement.dataset.theme = 'light'; }
+</script>
+<meta name="description" content="StudySpace — turn your sources into understanding. A focused AI learning workspace." /> <!-- Describe the app for saved links. -->
+<title>StudySpace — Your learning workspace</title> <!-- Identify the browser tab. -->
+<link rel="icon" href={`${publicBase}favicon.svg`} type="image/svg+xml" /> <!-- Use a compact vector brand mark. -->
+</head> <!-- Finish page metadata. -->
+<body> <!-- Start the accessible application shell. -->
+<div class="app-shell"> <!-- Arrange navigation, workspace, and context panels. -->
+<aside class="sidebar" id="sidebar" aria-label="Workspace navigation">
+<div class="sidebar-mobile-header"><span>Menu &amp; conversations</span><button id="sidebar-close" class="icon-button drawer-close" type="button" aria-label="Close navigation"><i data-lucide="x"></i></button></div> <!-- Keep navigation separate from chat content. -->
+<a class="brand" href={publicBase} aria-label="StudySpace home"><span class="brand-mark">s<span>✦</span></span><span>studyspace<span class="brand-dot">.</span></span></a> <!-- Introduce the learning workspace brand. -->
+<button id="new-chat" class="new-chat"><i data-lucide="plus"></i> New conversation <span>↗</span></button> <!-- Create an isolated source-grounded conversation. -->
+<p class="nav-label">WORKSPACE</p> <!-- Group primary application areas. -->
+<nav> <!-- Expose semantic primary navigation. -->
+<button class="nav-item active" data-tab="chat"><i data-lucide="messages-square"></i> Chat <span class="nav-pill">Home</span></button> <!-- Open the main chat workspace. -->
+<button class="nav-item" data-tab="documents"><i data-lucide="files"></i> Documents</button> <!-- Open document import and generation tools. -->
+<button class="nav-item" data-tab="study"><i data-lucide="graduation-cap"></i> Study tools</button> <!-- Open flashcards, textbooks, slides, and planning. -->
+<button class="nav-item" data-tab="library"><i data-lucide="folder-heart"></i> My library</button>
+<button class="nav-item" data-tab="resources"><i data-lucide="library"></i> Resource hub <span class="tiny-dot"></span></button> <!-- Open curated learning sources. -->
+</nav> <!-- Finish primary navigation. -->
+<div class="history-head"><p class="nav-label">YOUR CONVERSATIONS</p><i data-lucide="clock-3"></i></div> <!-- Label the isolated chat history. -->
+<div id="chat-list" class="chat-list"><p class="muted small">Your ideas start here.<br />Sign in to save conversations.</p></div> <!-- Render conversations after authentication. -->
+<div class="sidebar-bottom"> <!-- Anchor personalization controls at the bottom. -->
+<div class="learning-note"><span>✧</span><p>A little curiosity,<br /><strong>a lot of possibility.</strong></p></div> <!-- Add a quiet learning-oriented brand detail. -->
+<button id="settings-open" class="nav-item"><i data-lucide="sliders-horizontal"></i> Settings & memory</button> <!-- Open editable privacy preferences. -->
+<button id="account-open" class="account"><span class="avatar">Y</span><span><strong id="account-name">Your workspace</strong><small id="account-state">Sign in to save history</small></span><i data-lucide="chevrons-up-down"></i></button> <!-- Show the active account and connection controls. -->
+</div> <!-- Finish the sidebar footer. -->
+</aside> <!-- Finish workspace navigation. -->
+<div class="workspace"> <!-- Hold the main application content. -->
+<header class="topbar"><div class="topbar-location"><button id="mobile-menu" class="icon-button mobile-menu" type="button" aria-label="Open navigation and conversations" aria-controls="sidebar" aria-expanded="false"><i data-lucide="menu"></i></button><span class="breadcrumb">Workspace</span><span class="slash">/</span><strong id="page-name">Chat</strong></div><div class="top-actions"><span class="environment-badge" id="environment-badge">TESTBED</span><span id="connection" class="status"><span></span> Preview · API not connected</span><button id="theme-toggle" type="button" class="icon-button theme-toggle" aria-label="Switch to dark mode" aria-pressed="false" title="Toggle light and dark mode"><span class="theme-icon" aria-hidden="true">☾</span></button><button id="guide-toggle" type="button" class="guide-toggle" aria-label="Open navigation guide" aria-controls="study-guide" aria-expanded="false" title="How to find your way around"><span aria-hidden="true">✧</span><span class="guide-toggle-label">Guide</span></button><button id="sources-toggle" type="button" class="icon-button sources-toggle" aria-label="Open current chat sources" aria-controls="context-panel" aria-expanded="false"><i data-lucide="panel-right"></i></button></div></header> <!-- Show location and truthful connection state. -->
+<!-- Small, opt-in orientation dock. It never blocks the workspace. -->
+<aside id="study-guide" class="study-guide" aria-label="StudySpace navigation guide" hidden>
+  <div class="study-guide-top"><span class="study-guide-kicker">✿ THE LITTLE GUIDE</span><button id="guide-close" type="button" class="icon-button" aria-label="Close navigation guide">✕</button></div>
+  <div class="study-guide-progress" aria-label="Guide progress"><span id="guide-step-counter">1 of 7</span><div class="study-guide-dots" id="guide-dots" aria-hidden="true"></div></div>
+  <h2 id="guide-title">Start with a question</h2>
+  <p id="guide-description">Ask for an explanation or a summary. Your conversation stays in the Chat area.</p>
+  <div class="study-guide-controls">
+    <button type="button" id="guide-prev" class="guide-secondary" aria-label="Previous guide step">← Back</button>
+    <button type="button" id="guide-go" class="guide-primary">Open Chat ↗</button>
+    <button type="button" id="guide-next" class="guide-secondary" aria-label="Next guide step">Next →</button>
+  </div>
+  <p class="study-guide-footnote">Only here when you need it. Close anytime.</p>
+</aside>
+<main id="main"> <!-- Expose the primary learning workspace. -->
+<section id="tab-chat" class="tab active"> <!-- Render the main conversation area. -->
+<div class="chat-area" id="chat-area"> <!-- Keep chat scroll independent from the composer. -->
+<div id="welcome" class="welcome"> <!-- Present a focused empty state before the first message. -->
+<div class="eyebrow"><span class="sparkle">✧</span> YOUR SPACE TO MAKE SENSE OF THINGS</div> <!-- Explain the workspace purpose briefly. -->
+<h1>Big ideas.<br /><span>A little more clarity.</span></h1> <!-- Establish a welcoming visual hierarchy. -->
+<p class="intro">Bring your documents, questions, and curiosity.<br /> Let’s turn what you’re learning into what you understand.</p> <!-- Guide the user's first action. -->
+<div class="quick-actions"> <!-- Offer concrete starting tasks. -->
+<button data-prompt="Summarize the key ideas from my sources." class="action-card"><span class="tile-icon sage"><i data-lucide="scan-text"></i></span><strong>Make it clear</strong><span>Find the key ideas in your files</span><i class="card-arrow" data-lucide="arrow-up-right"></i></button> <!-- Prefill a source summary request. -->
+<button data-prompt="Explain the hardest concept in my sources step by step, with an example." class="action-card"><span class="tile-icon peach"><i data-lucide="lightbulb"></i></span><strong>Help it click</strong><span>Break down a tricky concept</span><i class="card-arrow" data-lucide="arrow-up-right"></i></button> <!-- Prefill a guided explanation request. -->
+<button data-go="study" class="action-card"><span class="tile-icon lavender"><i data-lucide="layers"></i></span><strong>Make it stick</strong><span>Turn your notes into flashcards</span><i class="card-arrow" data-lucide="arrow-up-right"></i></button> <!-- Navigate to practice tools. -->
+</div> <!-- Finish task shortcuts. -->
+<button id="explore-example" class="example-link">New here? Explore a sample learning session <span>→</span></button> <!-- Offer a clearly labeled local example without pretending to call AI. -->
+</div> <!-- Finish the welcome state. -->
+<div id="messages" class="messages" aria-live="polite"></div> <!-- Announce new conversation messages accessibly. -->
+</div> <!-- Finish the conversation scroll area. -->
+<div class="composer-wrap"> <!-- Keep the message input within easy reach. -->
+<div class="context-strip"><span><i data-lucide="shield-check"></i> This chat’s sources only</span><button id="add-source-inline">+ Add a source</button></div> <!-- Make the grounding boundary visible at submission time. -->
+<form id="chat-form" class="composer"> <!-- Submit questions with keyboard or button controls. -->
+<textarea id="question" rows="2" maxlength="6000" placeholder="Ask a question, explore an idea, or make something…" aria-label="Your question"></textarea> <!-- Store the current draft in the offline buffer. -->
+<div class="composer-toolbar"><div><button type="button" id="attach" class="icon-button" aria-label="Upload a document"><i data-lucide="paperclip"></i></button><label class="style-select"><i data-lucide="sliders-horizontal"></i><select id="style" aria-label="Response style"><option>Detailed explanation</option><option>Short summary</option><option>Bullet points</option><option>Step by step</option></select></label></div><button id="send" type="submit" aria-label="Send message"><i data-lucide="arrow-up"></i></button></div> <!-- Offer response style and submission controls. -->
+</form> <!-- Finish message composition. -->
+<p class="composer-note"><span id="draft-status">Drafts stay on this device.</span><span>DeepSeek-powered · Check important facts.</span></p> <!-- Describe persistence and factual limits. -->
+</div> <!-- Finish the composer area. -->
+</section> <!-- Finish the chat tab. -->
+<section id="tab-documents" class="tab tool-page"> <!-- Group source import and document creation. -->
+<div class="eyebrow">FROM INFORMATION TO UNDERSTANDING</div><h1>Your documents,<br /><span>working with you.</span></h1><p class="intro">Upload once. Summarize, explore, and create from the sources in your current chat.</p> <!-- Introduce document actions. -->
+<button id="drop-zone" class="drop-zone"><i data-lucide="cloud-upload"></i><strong>Drop a document here, or browse</strong><span>PDF, DOCX, PPTX, XLSX, TXT, CSV, VTT · Up to 12 MB each</span></button> <!-- Accept drag-and-drop or keyboard-triggered file selection. -->
+<div class="tool-grid"><button class="tool-card" data-tool="summary"><i data-lucide="scan-text"></i><h3>Structured summary</h3><p>Key points, important facts, and clear source references.</p><span>Create summary →</span></button><button class="tool-card" data-tool="review"><i data-lucide="message-square-heart"></i><h3>Improve my work</h3><p>Specific strengths, supported corrections, and useful next steps.</p><span>Review sources →</span></button><button class="tool-card" id="video-import"><i data-lucide="video"></i><h3>Video to notes</h3><p>Import a transcript or caption file, then export clean learning notes.</p><span>Add transcript →</span></button></div> <!-- Provide grounded document workflows. -->
+<div class="info-banner"><i data-lucide="info"></i><span>Public Google Docs, Slides, and Sheets links are supported. Private files need an export. Image-only PDFs need OCR first.</span></div> <!-- Explain actual importer capabilities. -->
+</section> <!-- Finish document tools. -->
+<section id="tab-study" class="tab tool-page"> <!-- Offer source-based learning artifacts. -->
+<div class="eyebrow">UNDERSTAND IT. PRACTISE IT. KEEP IT.</div><h1>Build your<br /><span>next “I get it.”</span></h1><p class="intro">Small steps, useful tools, and learning that feels like yours.</p> <!-- Introduce active practice. -->
+<div class="tool-grid study-grid"><button class="tool-card" data-tool="flashcards"><span class="tile-icon lavender"><i data-lucide="layers"></i></span><h3>Flashcards</h3><p>Recall the essentials, one question at a time.</p><span>Create a card set →</span></button><button class="tool-card" data-tool="textbook"><span class="tile-icon sage"><i data-lucide="book-open"></i></span><h3>Mini textbook</h3><p>Chapters, examples, key terms, and review questions.</p><span>Build a textbook →</span></button><button class="tool-card" data-tool="slides"><span class="tile-icon peach"><i data-lucide="presentation"></i></span><h3>Presentation</h3><p>Turn your material into a clear, editable slide deck.</p><span>Generate slides →</span></button><button class="tool-card" data-tool="planner"><span class="tile-icon yellow"><i data-lucide="calendar-days"></i></span><h3>Study planner</h3><p>Practical sessions with meaningful checkpoints.</p><span>Plan my learning →</span></button></div> <!-- Expose each supported study generation task. -->
+<div class="progress-panel"><div><span class="eyebrow">YOUR LEARNING JOURNEY</span><h3 id="xp-label">Progress, at your pace.</h3><p id="xp-note">Achievements are optional. Enable them in Settings & memory.</p></div><span class="progress-emblem">✧</span></div> <!-- Display opt-in, noncompetitive learning milestones. -->
+</section> <!-- Finish study tools. -->
+<section id="tab-library" class="tab tool-page library-page" aria-label="My saved library">
+  <div class="eyebrow">✿ YOUR CREATIONS, ALL TOGETHER</div>
+  <div class="library-hero"><div><h1>Little ideas,<br /><span>lovingly kept.</span></h1><p class="intro">Your generated study materials and saved media, organised by type and tags. Just yours.</p></div><button id="library-upload" class="primary library-upload-btn" type="button"><i data-lucide="upload-cloud"></i> Add media</button></div>
+  <div class="library-bar">
+    <label class="library-field"><span>Search library</span><input id="library-search" type="search" placeholder="Find a title…" autocomplete="off" /></label>
+    <label class="library-field"><span>Category</span><select id="library-category"><option value="">All categories</option><option value="summary">Summaries</option><option value="review">Reviews</option><option value="flashcards">Flashcards</option><option value="textbook">Textbooks</option><option value="slides">Slides</option><option value="planner">Planners</option><option value="image">Images</option><option value="audio">Audio</option><option value="video">Videos</option><option value="document">Documents</option><option value="other">Other</option></select></label>
+    <label class="library-field"><span>Tag</span><input id="library-tag" type="search" placeholder="e.g. flashcards" autocomplete="off" /></label>
+  </div>
+  <div class="library-results"><p id="library-total" class="muted small">Your private collection</p><button id="library-refresh" type="button" class="secondary">Refresh ↻</button></div>
+  <div id="library-grid" class="library-grid" aria-live="polite"><div class="library-empty">✿ Sign in to see your collection.</div></div>
+  <button id="library-more" class="secondary library-more" type="button" hidden>Load more creations ↓</button>
+  <p class="library-privacy"><i data-lucide="lock-keyhole"></i> Private to your account · Generated materials save automatically · Uploaded media is stored in a private Supabase bucket</p>
+</section>
+<section id="tab-resources" class="tab tool-page"> <!-- Provide a curated source discovery hub. -->
+<div class="eyebrow">GOOD QUESTIONS START WITH GOOD SOURCES</div><h1>A little library.<br /><span>A world to explore.</span></h1><p class="intro">A starter collection of primary and openly accessible learning resources.<br /> Add a specific page to your chat to use it as evidence.</p> <!-- Explain resource provenance without claiming certification. -->
+<label class="resource-search"><i data-lucide="search"></i><input id="resource-search" type="search" placeholder="Find a subject or resource…" /></label> <!-- Filter the resource collection locally. -->
+<div id="resource-grid" class="resource-grid"></div> <!-- Populate reviewed source directory cards. -->
+<p class="muted small">Curated starting points, not an independently certified research database. Access and reuse licences vary by publisher.</p> <!-- State the directory's actual verification scope. -->
+</section> <!-- Finish the resource hub. -->
+</main> <!-- Finish primary content. -->
+<nav class="mobile-bottom-nav" aria-label="Mobile workspace navigation">
+<button type="button" class="mobile-nav-button active" data-tab="chat" aria-current="page"><i data-lucide="messages-square"></i><span>Chat</span></button>
+<button type="button" class="mobile-nav-button" data-tab="documents"><i data-lucide="files"></i><span>Documents</span></button>
+<button type="button" class="mobile-nav-button" data-tab="study"><i data-lucide="graduation-cap"></i><span>Study tools</span></button>
+<button type="button" class="mobile-nav-button" data-tab="library"><i data-lucide="folder-heart"></i><span>Library</span></button>
+<button type="button" class="mobile-nav-button" data-tab="resources"><i data-lucide="library"></i><span>Resources</span></button>
+</nav>
+</div> <!-- Finish the central workspace. -->
+<aside class="context-panel" id="context-panel" aria-label="Current chat sources"> <!-- Show evidence and chat context alongside answers. -->
+<div class="context-title"><h2>Your context</h2><span id="source-count" class="count">0</span><button id="sources-close" type="button" class="icon-button drawer-close" aria-label="Close sources"><i data-lucide="x"></i></button></div><p class="muted small">A little context goes a long way.</p> <!-- Summarize current-chat evidence. -->
+<button id="add-source" class="source-button"><i data-lucide="plus"></i> Add sources</button> <!-- Open file, URL, and text import. -->
+<div id="source-list" class="source-list"></div> <!-- Render attached files with removal controls. -->
+<div id="source-empty" class="source-empty"><div class="paper-stack"><i data-lucide="file-text"></i><span>✦</span></div><h3>Bring something to the table</h3><p>Your files and links live here.<br />Only sources in this chat inform its answers.</p><span class="format-tags">PDF <b>·</b> DOCX <b>·</b> PPTX <b>·</b> XLSX</span></div> <!-- Explain source isolation in the empty state. -->
+<div class="context-bottom"><div class="private-note"><i data-lucide="lock-keyhole"></i><div><strong>Personal by choice.</strong><p>Memory is off until you choose otherwise. You’re in control.</p></div></div><div class="tip"><span>✧ A SMALL STUDY TIP</span><p>After a summary, try asking:<br /><strong>“Can you give me an example?”</strong></p></div></div> <!-- Offer transparent privacy and a practical follow-up suggestion. -->
+</aside> <!-- Finish the evidence panel. -->
+</div> <!-- Finish the application shell. -->
+<button id="drawer-backdrop" class="drawer-backdrop" type="button" aria-label="Close open panel" hidden></button>
+<input type="file" id="library-file-input" accept=".png,.jpg,.jpeg,.webp,.gif,.mp3,.wav,.ogg,.m4a,.mp4,.webm,.pdf,.docx,.pptx,.xlsx,.txt,.md,.csv,.vtt,.srt" hidden />
+<input type="file" id="file-input" accept=".pdf,.docx,.pptx,.xlsx,.txt,.md,.csv,.vtt,.srt" hidden /> <!-- Use one reusable file picker for all upload entry points. -->
+<dialog id="source-dialog"><form method="dialog" class="dialog-head"><h2>Add a source</h2><button class="icon-button" aria-label="Close">✕</button></form><p class="muted">Sources stay isolated to the current conversation.</p><button id="dialog-upload" class="primary full">Choose a document</button><div class="divider">or import an accessible link</div><form id="link-form"><label>Page, Google file, or direct caption URL<input id="source-url" type="url" placeholder="https://…" required /></label><button class="primary">Import link</button></form><div class="divider">or paste notes / a video transcript</div><form id="text-form"><label>Source name<input id="text-name" value="My notes" maxlength="200" required /></label><label>Source content<textarea id="source-text" rows="5" minlength="20" maxlength="240000" required placeholder="Paste text or captions here…"></textarea></label><button class="primary">Add text source</button></form><p class="small muted">Video platforms may require you to copy captions. No video transcription model is used.</p></dialog> <!-- Offer honest, accessible source import paths. -->
+<dialog id="account-dialog" class="auth-dialog" aria-labelledby="auth-title">
+  <form method="dialog" class="dialog-head auth-head"><span class="auth-sparkle" aria-hidden="true">✿</span><button class="icon-button" aria-label="Close account window" title="Close">✕</button></form>
+  <div class="auth-welcome"><div class="auth-illustration" aria-hidden="true">✦ <span>🌸</span> ✧</div><h2 id="auth-title">Welcome to StudySpace</h2><p id="auth-subtitle">Your little corner to learn, explore and grow.</p></div>
+  <div class="auth-tabs" role="tablist" aria-label="Account access">
+    <button type="button" class="auth-tab active" id="auth-login-tab" role="tab" aria-selected="true" aria-controls="account-form" data-auth-mode="login">Log in</button>
+    <button type="button" class="auth-tab" id="auth-signup-tab" role="tab" aria-selected="false" aria-controls="account-form" data-auth-mode="signup">Sign up</button>
+  </div>
+  <form id="account-form" class="auth-form">
+    <label>Email address<input id="username" type="email" autocomplete="email" placeholder="you@example.com" maxlength="254" required /></label>
+    <label>Password<span class="auth-password-row"><input id="password" type="password" autocomplete="current-password" placeholder="Enter your password" minlength="1" maxlength="128" required /><button type="button" id="password-visibility" class="auth-visibility" aria-label="Show or hide password" aria-pressed="false">Show</button></span></label>
+    <p class="auth-hint" id="auth-password-hint" hidden>Use at least 12 characters to protect your account.</p>
+    <button class="primary full auth-submit" id="auth-submit" type="submit">Log in to StudySpace <span aria-hidden="true">→</span></button>
+    <p class="auth-feedback" id="auth-feedback" role="status" aria-live="polite" hidden></p>
+  </form>
+  <div class="auth-signed-in" id="auth-signed-in" hidden><p>You're signed in. Your study sessions and chat history are saved to your account.</p><button id="logout" class="secondary full" type="button">Sign out</button></div>
+  <p class="auth-footer">✿ Your chats are saved securely with Supabase.</p>
+</dialog> <!-- Authenticate against the independently hosted API. -->
+<dialog id="settings-dialog"><form method="dialog" class="dialog-head"><h2>Your learning, your way</h2><button class="icon-button" aria-label="Close">✕</button></form><form id="settings-form"><label class="check-label"><input id="memory-enabled" type="checkbox" /> Use preferences, question topics, and previous feedback</label><label>Subjects you enjoy<input id="interests" maxlength="600" placeholder="e.g. cybersecurity, design, biology" /></label><label>Explanation level<select id="difficulty"><option value="beginner">Beginner · start with the basics</option><option value="intermediate">Intermediate · build on what I know</option><option value="advanced">Advanced · go deeper</option></select></label><label>How you like to learn<textarea id="preferences" maxlength="1200" rows="3" placeholder="e.g. practical examples, short steps, recall questions"></textarea></label><label class="check-label"><input id="achievements-enabled" type="checkbox" /> Enable optional XP and milestones</label><button class="primary full">Save preferences</button></form><p class="small muted">Preferences change presentation, not the facts. Turning memory off stops its use; forgetting removes preferences and feedback. Chat history stays until deleted.</p><p id="learned-topics" class="small muted"></p><button id="forget-topics" class="secondary full">Clear learned topics & response style</button><button id="forget-memory" class="secondary full">Forget preferences & feedback</button><button id="delete-chat" class="secondary full">Delete current conversation</button><button id="delete-account" class="danger full">Delete my account & all server data</button></dialog> <!-- Give users explicit memory and deletion controls. -->
+<dialog id="artifact-dialog" class="wide-dialog"><form method="dialog" class="dialog-head"><h2 id="artifact-title">Study notes</h2><button class="icon-button" aria-label="Close">✕</button></form><div class="export-bar"><span id="artifact-library-status">✿ Generated materials are saved to your library</span><button data-export="docx">Word</button><button data-export="pdf">PDF</button><button type="button" disabled aria-disabled="true" class="demo-disabled-export" title="PowerPoint exports are paused for the hackathon demo">Slides (soon)</button></div><div id="artifact-content"></div><button id="complete-goal" class="secondary full">Mark this learning activity complete</button></dialog> <!-- Preview generated artifacts before downloading or recording progress. -->
+<dialog id="library-detail-dialog" class="wide-dialog" aria-labelledby="library-detail-title">
+  <form method="dialog" class="dialog-head"><h2 id="library-detail-title">Saved creation</h2><button class="icon-button" aria-label="Close library item">✕</button></form>
+  <div id="library-preview" class="library-preview"></div>
+  <form id="library-edit-form" class="library-edit-form"><label>Title<input id="library-edit-title" maxlength="120" required /></label><label>Category<select id="library-edit-category"><option value="summary">Summary</option><option value="review">Review</option><option value="flashcards">Flashcards</option><option value="textbook">Textbook</option><option value="slides">Slides</option><option value="planner">Planner</option><option value="image">Image</option><option value="audio">Audio</option><option value="video">Video</option><option value="document">Document</option><option value="other">Other</option></select></label><label>Tags <span class="muted">(comma-separated, up to 10)</span><input id="library-edit-tags" placeholder="study, revision, chapter-1" /></label><button class="primary full" type="submit">Save changes</button></form>
+  <button id="library-delete" class="danger full" type="button">Delete this item permanently</button>
+</dialog>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div> <!-- Announce success and failure without blocking the interface. -->
+<script src="../scripts/app.js"></script>
+<script src="../scripts/ui-enhancements.js"></script>
+<script src="../scripts/performance-check.js"></script> <!-- Bundle only the interactive client code. -->
+</body> <!-- Finish the application body. -->
+</html> <!-- Finish the static document. -->

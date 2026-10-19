@@ -1,0 +1,32 @@
+{
+  "name": "studyspace-backend",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "scripts": {
+    "start": "node --env-file=.env src/dev.js",
+    "dev": "node --env-file=.env.testbed src/dev.js",
+    "test": "node --test test/*.test.js",
+    "check": "node --check src/index.js && node --check src/dev.js && node --check src/environment.js",
+    "start:production": "node --env-file=.env.production src/dev.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
+    "cheerio": "^1.1.2",
+    "cors": "^2.8.5",
+    "docx": "^9.5.1",
+    "express": "^5.1.0",
+    "fast-xml-parser": "^5.11.2",
+    "fflate": "^0.8.2",
+    "helmet": "^8.1.0",
+    "ipaddr.js": "^2.2.0",
+    "pdf-parse": "1.1.1",
+    "pdfkit": "^0.17.2",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.10"
+  }
+}

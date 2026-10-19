@@ -1,0 +1,128 @@
+/* StudySpace appearance and non-modal navigation guide.
+   Scoped to the frontend; intentionally does not change API/authentication state. */
+
+/* Small topbar controls remain present on every screen size. */
+.theme-toggle,.guide-toggle{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;min-width:40px;min-height:40px;border-radius:11px;transition:background .18s ease,color .18s ease}
+.theme-toggle .theme-icon{font-family:Arial,sans-serif;font-size:21px;line-height:1}
+.guide-toggle{gap:5px;border:1px solid var(--line);padding:0 11px;color:#506f5c;font-size:11px;font-weight:700;background:#f5f7f0}
+.guide-toggle>span:first-child{font-size:16px;color:#b67a96}
+.guide-toggle:hover,.guide-toggle.active{background:#e7ede2;color:#275040}
+.theme-toggle:hover{background:#e9f0e5}
+.theme-toggle:focus-visible,.guide-toggle:focus-visible{outline:3px solid #83b7a2;outline-offset:2px}
+
+.study-guide[hidden]{display:none!important}
+.study-guide{--guide-surface:#fffefa;--guide-soft:#f3f7ef;--guide-fg:#2c4e3e;--guide-muted:#708371;position:fixed;z-index:42;top:85px;right:22px;width:min(350px,calc(100vw - 24px));max-height:calc(100dvh - 105px);overflow-y:auto;padding:19px 20px 16px;border:1px solid #dce6d8;border-radius:19px;background:var(--guide-surface);color:var(--guide-fg);box-shadow:0 20px 60px #1f352429}
+.study-guide-top,.study-guide-progress,.study-guide-controls{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.study-guide-kicker{font-size:10px;letter-spacing:1.5px;font-weight:800;color:#af7893}
+.study-guide-top .icon-button{width:34px;height:34px;color:var(--guide-muted);font-size:14px}
+.study-guide-progress{margin:10px 0 8px;font-size:11px;color:var(--guide-muted)}
+.study-guide-dots{display:flex;gap:5px}.study-guide-dots>span{width:15px;height:5px;border-radius:5px;background:#e1e9dd}.study-guide-dots>span.active{background:#6a9781}
+.study-guide h2{font-family:'Manrope',sans-serif;font-size:18px;line-height:1.36;letter-spacing:-.4px;font-weight:700;margin:12px 0 6px}
+.study-guide p{color:var(--guide-muted);font-size:12px;line-height:1.7;margin:0}
+.study-guide-controls{margin-top:18px;justify-content:stretch;flex-wrap:wrap}
+.study-guide-controls button{border-radius:9px;min-height:38px;padding:7px 10px;font-size:11px;font-weight:700}
+.study-guide-controls .guide-primary{flex:1;background:#2d5544;color:white;white-space:nowrap}
+.study-guide-controls .guide-primary:hover{background:#386f54}
+.study-guide-controls .guide-secondary{border:1px solid #dce6d8;color:var(--guide-fg)}
+.study-guide-controls .guide-secondary:not(:disabled):hover{background:var(--guide-soft)}
+.study-guide-controls button:disabled{opacity:.38;cursor:default}
+.study-guide .study-guide-footnote{text-align:center;font-size:10px;margin-top:11px;color:#94a097}
+@media (min-width:1201px){.study-guide{right:307px}}
+@media (min-width:1600px){.study-guide{right:332px}}
+@media (max-width:900px){.study-guide{top:auto;right:12px;bottom:calc(74px + env(safe-area-inset-bottom));max-height:min(410px,calc(100dvh - 142px));width:min(350px,calc(100vw - 24px));box-shadow:0 8px 35px #1f352436}}
+@media (max-width:600px){
+  .top-actions{gap:4px}
+  .topbar .status{display:none}
+  .theme-toggle{min-width:42px;min-height:42px}
+  .guide-toggle{min-width:42px;min-height:42px;padding:0 8px}
+  .guide-toggle-label{font-size:11px}
+}
+@media (max-width:380px){.guide-toggle-label{display:none}.guide-toggle{padding:0}}
+@media (prefers-reduced-motion:reduce){.theme-toggle,.guide-toggle{transition:none}}
+
+/* Dark palette: warm charcoal, muted sage and gentle blossom accents.
+   All existing forms, drawers and study pages remain readable and usable. */
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --green:#355e4c;--muted:#a8bcab;--line:#34483d;--paper:#111b18;
+  color:#e8eee7;background:#111b18;
+}
+html[data-theme="dark"] body{background:#111b18;color:#e8eee7}
+html[data-theme="dark"] .sidebar{background:#182520}
+html[data-theme="dark"] .workspace{background:#111b18}
+html[data-theme="dark"] .context-panel{background:#17231e}
+html[data-theme="dark"] .topbar,html[data-theme="dark"] .mobile-bottom-nav{background:#17241e;border-color:var(--line)}
+html[data-theme="dark"] .brand,html[data-theme="dark"] h1,html[data-theme="dark"] #page-name,html[data-theme="dark"] .topbar strong{color:#eef5ed}
+html[data-theme="dark"] h1 span{color:#afc2b0}
+html[data-theme="dark"] .intro,html[data-theme="dark"] .status,html[data-theme="dark"] .breadcrumb,html[data-theme="dark"] .context-strip,html[data-theme="dark"] .muted,html[data-theme="dark"] .source-empty h3,html[data-theme="dark"] .source-empty p{color:#abbdaf}
+html[data-theme="dark"] .nav-label,html[data-theme="dark"] .history-head svg,html[data-theme="dark"] .account small,html[data-theme="dark"] .new-chat span{color:#a7b8a7}
+html[data-theme="dark"] .nav-item,html[data-theme="dark"] .chat-list button,html[data-theme="dark"] .mobile-nav-button{color:#bfcec0}
+html[data-theme="dark"] .nav-item:hover,html[data-theme="dark"] .nav-item.active,html[data-theme="dark"] .mobile-nav-button.active,html[data-theme="dark"] .mobile-nav-button[aria-current="page"]{background:#2a4034;color:#e7f4e7}
+html[data-theme="dark"] .icon-button:hover,html[data-theme="dark"] .theme-toggle:hover{background:#293d33}
+html[data-theme="dark"] .brand-mark{background:#406f58}
+html[data-theme="dark"] .nav-pill,html[data-theme="dark"] .new-chat,html[data-theme="dark"] .source-button,html[data-theme="dark"] .drop-zone{border-color:#42604b}
+html[data-theme="dark"] .new-chat,html[data-theme="dark"] .source-item,html[data-theme="dark"] .action-card,html[data-theme="dark"] .tool-card,html[data-theme="dark"] .resource-card,html[data-theme="dark"] .resource-search,html[data-theme="dark"] .composer{background:#213128;color:#e9f0e8}
+html[data-theme="dark"] .action-card:hover,html[data-theme="dark"] .tool-card:hover{border-color:#709f7c}
+html[data-theme="dark"] .action-card,html[data-theme="dark"] .tool-card,html[data-theme="dark"] .resource-card,html[data-theme="dark"] .composer,html[data-theme="dark"] .resource-search,html[data-theme="dark"] .source-item{border-color:#375244}
+html[data-theme="dark"] .action-card>span:not(.tile-icon),html[data-theme="dark"] .tool-card p,html[data-theme="dark"] .resource-card p,html[data-theme="dark"] .resource-card small,html[data-theme="dark"] .source-item small{color:#b1c0b2}
+html[data-theme="dark"] .tool-card>svg,html[data-theme="dark"] .eyebrow,html[data-theme="dark"] .example-link,html[data-theme="dark"] .message-label,html[data-theme="dark"] .message-tools button,html[data-theme="dark"] .citation{color:#b5d5a8}
+html[data-theme="dark"] .resource-card a,html[data-theme="dark"] .resource-card button,html[data-theme="dark"] .context-strip button,html[data-theme="dark"] .tool-card>span:last-child{color:#afd9aa}
+html[data-theme="dark"] .drop-zone,html[data-theme="dark"] .progress-panel,html[data-theme="dark"] .message.user,html[data-theme="dark"] .message pre,html[data-theme="dark"] .flashcard{background:#24372b;color:#e7efe3}
+html[data-theme="dark"] .drop-zone.dragover{background:#30533c}
+html[data-theme="dark"] .progress-panel p,html[data-theme="dark"] .drop-zone span,html[data-theme="dark"] .composer-note,html[data-theme="dark"] .source-item button,html[data-theme="dark"] .source-empty .format-tags,html[data-theme="dark"] .private-note p{color:#b0bfaa}
+html[data-theme="dark"] .learning-note,html[data-theme="dark"] .tip{background:#29392b;border-color:#405443}
+html[data-theme="dark"] .learning-note p,html[data-theme="dark"] .learning-note strong,html[data-theme="dark"] .tip p,html[data-theme="dark"] .tip strong,html[data-theme="dark"] .tip>span,html[data-theme="dark"] .private-note strong{color:#c2d7b8}
+html[data-theme="dark"] .avatar{background:#365342;color:#e4f4d9}
+html[data-theme="dark"] .source-button{color:#cbdec1}
+html[data-theme="dark"] .count{background:#2b4033;color:#b7d3ae}
+html[data-theme="dark"] .composer textarea,html[data-theme="dark"] .resource-search input,html[data-theme="dark"] .style-select select{color:#e8eee7}
+html[data-theme="dark"] .composer textarea::placeholder,html[data-theme="dark"] .resource-search input::placeholder{color:#aab9a8}
+html[data-theme="dark"] .style-select svg,html[data-theme="dark"] .style-select select{color:#b7c8b4}
+html[data-theme="dark"] .message a{color:#b3e6bc}
+html[data-theme="dark"] .citation p{color:#c4dac0}
+html[data-theme="dark"] .sample-tag{background:#403925;color:#f6dc99}
+html[data-theme="dark"] .sage{background:#345040;color:#c0dfad}
+html[data-theme="dark"] .peach{background:#563f34;color:#f6c99e}
+html[data-theme="dark"] .lavender{background:#463e60;color:#d4c6fd}
+html[data-theme="dark"] .yellow{background:#4e462e;color:#f0de9d}
+html[data-theme="dark"] .paper-stack>svg,html[data-theme="dark"] .paper-stack span{color:#9ac49f}
+html[data-theme="dark"] .source-empty h3{color:#bcd3bb}
+html[data-theme="dark"] .format-tags,html[data-theme="dark"] .private-note>svg{color:#b0c9a8}
+html[data-theme="dark"] dialog{background:#1c2a22;border-color:#415747;color:#e8eee7}
+html[data-theme="dark"] dialog::backdrop{background:#0009}
+html[data-theme="dark"] dialog label,html[data-theme="dark"] .export-bar{color:#bdd0bc}
+html[data-theme="dark"] dialog input:not([type=checkbox]),html[data-theme="dark"] dialog textarea,html[data-theme="dark"] dialog select{background:#25372b;color:#eff4eb;border-color:#49614d}
+html[data-theme="dark"] dialog input::placeholder,html[data-theme="dark"] dialog textarea::placeholder{color:#a3b8a4}
+html[data-theme="dark"] .secondary,html[data-theme="dark"] .export-bar button{background:#2b4133;border-color:#49614d;color:#eef3e7}
+html[data-theme="dark"] .danger{background:#412e30;border-color:#805257;color:#ffd4d1}
+html[data-theme="dark"] .divider,html[data-theme="dark"] .flashcard small{color:#b3c3af}
+html[data-theme="dark"] .flashcard{border-color:#48634c}
+html[data-theme="dark"] .auth-dialog{background:linear-gradient(155deg,#23352a,#192820);border-color:#506451;box-shadow:0 25px 95px #0008}
+html[data-theme="dark"] .auth-welcome h2{color:#e8f5e9}
+html[data-theme="dark"] .auth-welcome p,html[data-theme="dark"] .auth-footer,html[data-theme="dark"] .auth-hint{color:#c5d5c6}
+html[data-theme="dark"] .auth-tabs{background:#304535}
+html[data-theme="dark"] .auth-tab{color:#c5d6c4}
+html[data-theme="dark"] .auth-tab.active{background:#425d48;color:#fff}
+html[data-theme="dark"] .auth-form label{color:#c8dfc8}
+html[data-theme="dark"] .auth-form input:not([type=checkbox]){background:#192920;color:#eaf3e8;border-color:#526d56}
+html[data-theme="dark"] .auth-feedback{background:#422c32;border-color:#804452;color:#ffd1d9}
+html[data-theme="dark"] .environment-badge{background:#3c3321;border-color:#796035;color:#f9db95}
+html[data-theme="dark"] .environment-badge[data-mode="production"]{background:#25432f;border-color:#48795a;color:#c4e9c8}
+html[data-theme="dark"] .guide-toggle{background:#293e31;border-color:#40594a;color:#deebe0}
+html[data-theme="dark"] .guide-toggle:hover,html[data-theme="dark"] .guide-toggle.active{background:#365441;color:#f3f8ed}
+html[data-theme="dark"] .study-guide{--guide-surface:#213329;--guide-soft:#314837;--guide-fg:#eff7ed;--guide-muted:#bdd0bc;border-color:#47604e;box-shadow:0 20px 60px #0008}
+html[data-theme="dark"] .study-guide-dots>span{background:#435a49}
+html[data-theme="dark"] .study-guide-dots>span.active{background:#9dcdb0}
+html[data-theme="dark"] .study-guide-controls .guide-secondary{border-color:#536c58;color:#e2f0dd}
+html[data-theme="dark"] .study-guide .study-guide-footnote{color:#aec5b1}
+html[data-theme="dark"] .study-guide-kicker{color:#e8b2c8}
+html[data-theme="dark"] .toast{background:#314b3b;color:#fff;border:1px solid #64856c}
+html[data-theme="dark"] :is(button,input,textarea,select,a):focus-visible{outline-color:#a2dac0}
+html[data-theme="dark"]{scrollbar-color:#405b49 #1c2a22}
+
+/* Production polish: accessible password controls and compact small-screen auth. */
+.auth-password-row{display:flex;align-items:stretch;gap:8px;width:100%}
+.auth-password-row input{min-width:0;flex:1}
+.auth-password-row .auth-visibility{flex:0 0 auto;min-height:44px;min-width:58px;align-self:flex-end;border-radius:10px;border:1px solid #cad8cc;color:#345b49;background:#f4f8f1;font-size:12px;font-weight:650}
+html[data-theme='dark'] .auth-password-row .auth-visibility{background:#294334;border-color:#52715d;color:#e5f5e7}
+@media(max-width:600px){.auth-dialog{padding:clamp(18px,4vw,30px)!important;max-height:min(92dvh,750px)}.auth-dialog .auth-welcome{margin-bottom:12px}.auth-dialog .auth-illustration{font-size:25px;margin-bottom:5px}.auth-dialog .auth-form{gap:10px}}

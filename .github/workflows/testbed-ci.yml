@@ -1,0 +1,51 @@
+name: Security CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main, develop, testbed]
+  schedule:
+    - cron: '17 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: security-tests-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout (immutable action)
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22.19.0'
+          cache: npm
+      - name: Static repository secret/config guard
+        run: node scripts/security-guard.mjs
+      - name: Install exactly locked dependencies
+        run: npm ci
+      - name: Block known high/critical npm advisories
+        run: npm audit --audit-level=high
+      - name: Block accidentally restored risky demo dependencies
+        run: npm run check:demo
+      - name: Full backend test suite
+        run: npm test
+      - name: Build static frontend (without deployment credentials)
+        env:
+          PUBLIC_APP_ENV: testbed
+          PUBLIC_API_URL: https://example.invalid
+          STUDYBUDDY_DEPLOY_TARGET: github-pages
+        run: npm run build --workspace frontend
+      - name: Enforce compressed asset budget
+        run: npm run build:budget

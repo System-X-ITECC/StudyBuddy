@@ -1,0 +1,106 @@
+name: Deploy Vercel API (approved)
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_sha:
+        description: 'Full 40-character SHA of current protected main HEAD'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: studybuddy-api-production
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: recheck-release
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Refuse arbitrary code or stale release SHA
+        shell: bash
+        env:
+          RELEASE_SHA: ${{ inputs.release_sha }}
+        run: |
+          [[ "$RELEASE_SHA" =~ ^[a-f0-9]{40}$ ]] || exit 1
+          [[ "$RELEASE_SHA" == "$(git rev-parse HEAD)" ]] || {
+            echo 'release_sha must exactly match current main HEAD'; exit 1;
+          }
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22.19.0'
+          cache: npm
+      - run: node scripts/security-guard.mjs
+      - run: npm ci
+      - run: npm audit --audit-level=high
+      - run: npm run check:demo
+      - run: npm test
+      - name: Recheck backend module syntax
+        run: npm run check --workspace backend
+
+  deploy-api:
+    name: approved-vercel-deployment
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: production
+    permissions:
+      contents: read
+    env:
+      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+      STUDYBUDDY_APP_ENV: ${{ vars.STUDYBUDDY_APP_ENV }}
+      STUDYBUDDY_SUPABASE_URL: ${{ vars.STUDYBUDDY_SUPABASE_URL }}
+      STUDYBUDDY_SUPABASE_PROJECT_REF: ${{ vars.STUDYBUDDY_SUPABASE_PROJECT_REF }}
+      STUDYBUDDY_SUPABASE_PUBLISHABLE_KEY: ${{ vars.STUDYBUDDY_SUPABASE_PUBLISHABLE_KEY }}
+      STUDYBUDDY_TESTBED_SUPABASE_PROJECT_REF: ${{ vars.STUDYBUDDY_TESTBED_SUPABASE_PROJECT_REF }}
+      STUDYBUDDY_CLIENT_ORIGINS: ${{ vars.STUDYBUDDY_CLIENT_ORIGINS }}
+      STUDYBUDDY_ALLOW_REGISTRATION: ${{ vars.STUDYBUDDY_ALLOW_REGISTRATION }}
+      STUDYBUDDY_DEEPSEEK_MODEL: ${{ vars.STUDYBUDDY_DEEPSEEK_MODEL }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ inputs.release_sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22.19.0'
+      - name: Validate and synchronize Vercel production runtime values
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: node scripts/sync-vercel-env.mjs
+      - name: Install pinned Vercel CLI (no provider secrets in this step)
+        run: npm install --global vercel@54.20.1
+      - name: Pull Vercel project metadata
+        working-directory: backend
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+      - name: Build Vercel API
+        working-directory: backend
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel build --prod --token="$VERCEL_TOKEN"
+      - name: Deploy prebuilt API
+        working-directory: backend
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN" > "$RUNNER_TEMP/vercel-url.txt"
+      - name: Smoke-check public API (never print secret values)
+        shell: bash
+        env:
+          API_URL: ${{ vars.STUDYBUDDY_API_URL }}
+        run: |
+          node --input-type=module -e 'const u = new URL(process.env.API_URL); if (u.protocol!=="https:" || u.origin!==process.env.API_URL) process.exit(2)'
+          curl --fail --silent --show-error --max-time 30 "$API_URL/api/health" |
+            node -e 'let b="";process.stdin.on("data",c=>b+=c);process.stdin.on("end",()=>{const d=JSON.parse(b);if(!d.ok || !d.databaseConfigured || d.environment!==process.env.STUDYBUDDY_APP_ENV)process.exit(1);console.log("API health and environment verified")})'

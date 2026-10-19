@@ -1,0 +1,9 @@
+Active recall practice
+
+Active recall is the deliberate attempt to retrieve learned information before checking the source. A simple practice loop is: close the notes, answer one question from memory, compare the answer with the original material, and correct gaps.
+
+A learner can convert a definition into a question. For example, after studying the definition of a network protocol, the learner closes the notes and explains what the protocol does in their own words. The learner then checks the original definition and records missing details.
+
+A study session can contain a short review, three recall questions, correction of mistakes, and a plan to revisit difficult material later. The goal is understanding and accurate retrieval rather than collecting points for opening an app.
+
+This is an illustrative sample source created for testing StudySpace. It is not a scientific review or a certified reference.

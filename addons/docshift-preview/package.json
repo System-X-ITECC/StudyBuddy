@@ -1,0 +1,9 @@
+{
+  "name": "studyspace-experimental-word-preview",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "docshift": "0.0.73",
+    "dompurify": "^3.4.17"
+  }
+}
