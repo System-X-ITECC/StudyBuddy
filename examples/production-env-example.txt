@@ -1,0 +1,14 @@
+# Safe configuration example (not a real .env file). Do not commit real credentials.
+# GitHub Environment: production (deployment scope)
+# The example below is still testbed APPLICATION mode until a separate DB exists.
+STUDYBUDDY_APP_ENV=testbed
+STUDYBUDDY_SUPABASE_URL=https://dhksfuricdmeaeysszyc.supabase.co
+STUDYBUDDY_SUPABASE_PROJECT_REF=dhksfuricdmeaeysszyc
+STUDYBUDDY_TESTBED_SUPABASE_PROJECT_REF=dhksfuricdmeaeysszyc
+STUDYBUDDY_CLIENT_ORIGINS=https://system-x-itecc.github.io
+STUDYBUDDY_ALLOW_REGISTRATION=false
+STUDYBUDDY_DEEPSEEK_MODEL=deepseek-chat
+# Additional repository variables to enter interactively:
+# STUDYBUDDY_SUPABASE_PUBLISHABLE_KEY, STUDYBUDDY_API_URL
+# VERCEL_ORG_ID, VERCEL_PROJECT_ID, STUDYBUDDY_PRIVATE_MIGRATIONS_REPO
+# GitHub Environment Secrets: manually populate with tools/configure-production.sh --set-secrets

@@ -1,0 +1,72 @@
+/* StudyBuddy independent study studios. All sizes are responsive, keyboard-friendly. */
+.studio-page{max-width:1300px;margin:0 auto;padding-bottom:3rem}
+.studio-heading{display:flex;justify-content:space-between;align-items:center;gap:1rem}
+.studio-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:.7rem;margin:1rem 0}
+.studio-toolbar label{display:flex;align-items:center;gap:.6rem;font-weight:600;font-size:.86rem}
+.studio-toolbar input{min-width:clamp(170px,38vw,360px);border:1px solid #aebdb7;border-radius:10px;padding:.7rem;font:inherit;color:inherit;background:var(--surface,#fff)}
+.studio-toolbar button{border-radius:12px;padding:.75rem 1rem;min-height:42px}
+.studio-toolbar button:disabled{opacity:.42;cursor:not-allowed}
+.editing-toolbar{border:1px solid var(--border,#cad6d2);border-radius:14px;padding:.35rem;align-self:flex-start;width:max-content;max-width:100%}
+.editing-toolbar button{padding:.45rem .85rem;min-height:34px;border:0;background:transparent;color:inherit;cursor:pointer}
+.editing-toolbar button:hover,.editing-toolbar button:focus-visible{background:rgba(137,175,168,.22)}
+.word-canvas-wrap{width:100%;overflow:auto;border-radius:20px;padding:clamp(.5rem,3vw,2rem);background:linear-gradient(135deg,rgba(152,203,193,.18),rgba(201,167,245,.14));}
+.word-paper{box-sizing:border-box;max-width:210mm;min-height:230mm;margin:0 auto;background:#fff;color:#27333b;border:1px solid #e3e7e8;border-radius:5px;box-shadow:0 15px 48px #132d3320;padding:clamp(1.2rem,5vw,21mm);font:1rem/1.7 Georgia,serif;overflow-wrap:anywhere}
+.word-paper:focus{outline:3px solid #81b7af;outline-offset:3px}
+.word-paper h1,.word-paper h2,.word-paper h3{font-family:system-ui,sans-serif;line-height:1.25}
+.word-paper img,.word-paper table{max-width:100%}
+.slide-stage{position:relative;isolation:isolate;width:100%;aspect-ratio:16/9;max-height:75vh;overflow:hidden;display:grid;place-items:center;border-radius:clamp(10px,2vw,25px);color:#fff;background:linear-gradient(135deg,#254052 0%,#6a608f 52%,#9d728f 100%);box-shadow:0 22px 65px #1b293b29}
+.slide-stage::before{content:"";position:absolute;inset:-22%;z-index:-1;background:radial-gradient(circle at 24% 32%,#b5c5ff94,transparent 35%),radial-gradient(circle at 77% 74%,#ffb8d99c,transparent 40%),radial-gradient(circle at 48% 44%,#a8eadf78,transparent 35%);filter:blur(32px)}
+.slide-inner{width:85%;height:85%;padding:clamp(.6rem,2.2vw,2rem);display:flex;flex-direction:column;justify-content:center;overflow:auto;line-height:1.35;text-shadow:0 1px 9px #20283e66}
+.slide-inner h2{font-weight:800;font-size:clamp(1.15rem,4.2vw,4.4rem);line-height:1.08;margin:.6em 0 .4em;letter-spacing:-.025em}
+.slide-inner .slide-body{font-size:clamp(.72rem,1.8vw,1.7rem);line-height:1.48}
+.slide-inner .slide-body p{margin:.45em 0}
+.slide-inner .slide-body ul{padding-left:1.25em;margin:.3em 0}
+.slide-kicker{font:700 clamp(.52rem,1vw,.8rem)/1.2 system-ui,sans-serif;letter-spacing:.17em;opacity:.9}
+.slide-stage:fullscreen{width:100vw;height:100vh;max-height:none;border-radius:0;aspect-ratio:16/9}
+.slide-stage:fullscreen .slide-inner h2{font-size:clamp(2rem,6vw,5rem)}
+.slide-stage:fullscreen .slide-inner .slide-body{font-size:clamp(1rem,2.8vw,2.4rem)}
+.slide-navigation{justify-content:space-between}
+.practice-flashcard{cursor:pointer;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1.5rem;min-height:clamp(260px,40vw,410px);width:min(100%,680px);margin:1rem auto;padding:clamp(1rem,4vw,3rem);border:2px solid #b6d0ce;border-radius:28px;background:linear-gradient(125deg,#e5f4f0,#f3e8fb 70%,#ffe9dd);color:#263843;box-shadow:0 15px 34px #203f3e22;text-align:center;transition:transform .15s,box-shadow .15s}
+.practice-flashcard:hover{transform:translateY(-3px);box-shadow:0 18px 44px #203f3e30}
+.practice-flashcard:focus-visible{outline:3px solid #4d8c9e;outline-offset:4px}
+.practice-flashcard[aria-pressed="true"]{background:linear-gradient(130deg,#f1e5ff,#d7ebf2)}
+.practice-flashcard span{font-size:clamp(1.2rem,3vw,2rem);font-weight:700;line-height:1.4;overflow-wrap:anywhere}
+.practice-flashcard small{font-size:.7rem;font-weight:700;letter-spacing:.16em;color:#526775}
+.flash-actions{justify-content:center}
+.folder-toolbar{display:flex;gap:.35rem;margin:.45rem .6rem}
+.folder-toolbar button{font-size:.76rem;padding:.35rem .55rem}
+.folder-list{display:grid;gap:.25rem;margin:.3rem .6rem .7rem;max-height:225px;overflow-y:auto}
+.folder-chip-group{display:flex;align-items:center;gap:.1rem;min-width:0}
+.folder-chip{flex:1;min-width:0;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:0;background:transparent;text-align:left;border-radius:8px;color:inherit;padding:.4rem .5rem;cursor:pointer;font-size:.8rem}
+.folder-chip:first-letter{color:var(--folder-color,#8b9ca8)}
+.folder-chip:hover,.folder-edit:hover{background:rgba(132,167,174,.17)}
+.folder-edit{border:0;color:inherit;background:transparent;cursor:pointer;border-radius:8px;min-width:30px;min-height:30px}
+.chat-row{display:flex;align-items:center;gap:.1rem;min-width:0}
+.chat-row>button:first-child{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
+.chat-row .chat-rename{flex:none;border:0;background:transparent;color:inherit;opacity:.68;cursor:pointer;padding:.35rem}
+.chat-row .chat-select{display:none;flex:none;width:17px;height:17px;accent-color:#8e96d9}
+.chat-row.selecting .chat-select{display:block}
+.chat-folder-dot{width:7px;height:7px;border-radius:100%;flex:none;order:-1}
+.folder-assign-tools{display:grid;gap:.3rem;border-top:1px solid #a0b7b733;padding-top:.5rem}
+.folder-assign-tools select,.folder-assign-tools button{width:100%;padding:.45rem}
+.folder-dialog{max-width:min(92vw,420px);border:1px solid #cad4dc;border-radius:19px;background:var(--surface,#fff);color:inherit;padding:1.3rem}
+.folder-dialog form:not(.dialog-head){display:grid;gap:1rem}
+.folder-dialog label{display:grid;gap:.45rem}
+.folder-dialog input,.folder-dialog select{width:100%;border:1px solid #aabcb9;border-radius:10px;padding:.6rem;background:var(--surface,#fff);color:inherit}
+.folder-dialog-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+@media(max-width:700px){.studio-page{padding-inline:.7rem}.slide-inner{width:90%;height:91%}.slide-inner h2{font-size:clamp(1.1rem,5.1vw,2rem)}.slide-inner .slide-body{font-size:clamp(.7rem,2.35vw,1rem)}.slide-inner .slide-body li{line-height:1.25}.studio-toolbar{gap:.35rem}.studio-toolbar button{padding:.56rem .7rem}.word-paper{min-height:60vh}}
+@media(max-width:850px) and (orientation:landscape){.slide-stage{max-height:calc(100dvh - 6rem);width:min(100%,calc((100dvh - 6rem)*16/9));margin:auto}.slide-inner h2{font-size:clamp(1.5rem,5.3vh,2.6rem)}.slide-inner .slide-body{font-size:clamp(.8rem,3.4vh,1.18rem)}}
+@media(prefers-reduced-motion:reduce){.practice-flashcard{transition:none}.practice-flashcard:hover{transform:none}}
+
+/* Keep growing navigation reachable without burying folders on small screens. */
+.sidebar nav{flex-shrink:1;overflow-y:auto;min-height:120px}.studio-page.active{max-height:100%;overflow-y:auto}.chat-row .chat-rename{padding:.15rem .24rem;min-width:24px;font-size:14px}.folder-dialog .dialog-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+@media(max-width:760px){.sidebar:not(.drawer-open) .folder-toolbar,.sidebar:not(.drawer-open) .folder-list{display:none}.sidebar.drawer-open nav{max-height:35vh}.sidebar.drawer-open .folder-list{max-height:140px}}
+
+/* Visible jump points on the existing mobile Study tools screen. */
+.studio-quicklinks{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:.75rem;margin:1.5rem 0}
+.studio-quicklink{display:flex;align-items:center;gap:.75rem;text-align:left;min-width:0;padding:1rem;border-radius:14px;border:1px solid var(--border,#cad6d2);background:var(--surface,#fff);color:inherit;cursor:pointer}
+.studio-quicklink:hover,.studio-quicklink:focus-visible{outline:2px solid #79b1a9;outline-offset:2px}
+.studio-quicklink>span:nth-child(2){display:grid;flex:1;gap:.25rem}
+.studio-quicklink small{font-size:.74rem;opacity:.74}
+.studio-quicklink [data-lucide]{flex:none}
+@media(max-width:540px){.studio-quicklinks{grid-template-columns:1fr}}
