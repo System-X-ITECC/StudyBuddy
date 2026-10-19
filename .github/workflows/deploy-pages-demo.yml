@@ -1,3 +1,4 @@
+
 name: Deploy GitHub Pages (approved)
 
 on:
@@ -12,62 +13,149 @@ concurrency:
 
 jobs:
   build:
+    name: Verify API and build static frontend
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
+
     env:
       PUBLIC_APP_ENV: ${{ vars.STUDYBUDDY_APP_ENV }}
       PUBLIC_API_URL: ${{ vars.STUDYBUDDY_API_URL }}
       STUDYBUDDY_DEPLOY_TARGET: github-pages
+
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Checkout pinned source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+
+      - name: Setup Node.js for Astro
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: '22.19.0'
+          node-version: '22.22.0'
           cache: npm
-      - name: Validate expected public API URL
-        run: |
-          node --input-type=module -e '
-            const api = process.env.PUBLIC_API_URL || "";
-            const u = new URL(api);
-            if(u.protocol !== "https:" || u.origin !== api || u.hostname.endsWith(".supabase.co") || u.username || u.password) {
-              console.error("STUDYBUDDY_API_URL must be the HTTPS Vercel API origin");process.exit(1)
-            }
-            if(!["testbed", "production"].includes(process.env.PUBLIC_APP_ENV)) process.exit(1);
-          '
-      - run: node scripts/security-guard.mjs
-      - run: npm ci
-      - run: npm audit --audit-level=high
-      - run: npm test
-      - run: npm run check:demo
-      - name: Check API is ready before build
+
+      - name: Validate public API configuration
         shell: bash
         run: |
-          curl --fail --silent --show-error --max-time 25 "$PUBLIC_API_URL/api/health" |
-            node -e 'let b="";process.stdin.on("data",c=>b+=c);process.stdin.on("end",()=>{const d=JSON.parse(b);if(!d.ok || !d.databaseConfigured || d.environment!==process.env.PUBLIC_APP_ENV)process.exit(1);console.log("API ready")})'
-      - name: Compile static client
+          if [[ -z "$PUBLIC_API_URL" ]]; then
+            echo '::error::Missing repository Actions variable STUDYBUDDY_API_URL'
+            exit 1
+          fi
+
+          if [[ -z "$PUBLIC_APP_ENV" ]]; then
+            echo '::error::Missing repository Actions variable STUDYBUDDY_APP_ENV'
+            exit 1
+          fi
+
+          node --input-type=module <<'JS'
+          const api = process.env.PUBLIC_API_URL;
+          const environment = process.env.PUBLIC_APP_ENV;
+
+          let url;
+          try {
+            url = new URL(api);
+          } catch {
+            console.error('::error::Invalid API URL');
+            process.exit(1);
+          }
+
+          if (
+            url.protocol !== 'https:' ||
+            url.origin !== api ||
+            url.username ||
+            url.password ||
+            url.hostname.endsWith('.supabase.co') ||
+            ['localhost', '127.0.0.1', '::1'].includes(url.hostname)
+          ) {
+            console.error('::error::API URL must be a plain HTTPS origin');
+            process.exit(1);
+          }
+
+          if (!['testbed', 'production'].includes(environment)) {
+            console.error('::error::Invalid application environment');
+            process.exit(1);
+          }
+
+          console.log(`API configuration valid for ${environment}.`);
+          JS
+
+      - name: Check repository for secrets
+        run: node scripts/security-guard.mjs
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Check npm vulnerabilities
+        run: npm audit --audit-level=high
+
+      - name: Run backend tests
+        run: npm test
+
+      - name: Enforce secure demo dependencies
+        run: npm run check:demo
+
+      - name: Check API readiness
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          curl --fail --silent --show-error --max-time 25 \
+            "$PUBLIC_API_URL/api/health" \
+            > "$RUNNER_TEMP/studybuddy-health.json"
+
+          node --input-type=module <<'JS'
+          import { readFileSync } from 'node:fs';
+
+          const payload = JSON.parse(
+            readFileSync(
+              process.env.RUNNER_TEMP + '/studybuddy-health.json',
+              'utf8'
+            )
+          );
+
+          if (
+            payload.ok !== true ||
+            payload.databaseConfigured !== true ||
+            payload.environment !== process.env.PUBLIC_APP_ENV
+          ) {
+            console.error('::error::StudyBuddy API is not ready.');
+            process.exit(1);
+          }
+
+          console.log('StudyBuddy API ready.');
+          JS
+
+      - name: Build GitHub Pages frontend
         run: npm run build --workspace frontend
+
       - name: Check frontend asset budget
         run: npm run build:budget
-      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
-      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+
+      - name: Upload static-site artifact
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
           path: frontend/dist
 
   deploy:
+    name: Publish approved GitHub Pages artifact
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 15
+
     environment:
       name: production
       url: ${{ steps.pages.outputs.page_url }}
+
     permissions:
       contents: read
       pages: write
       id-token: write
+
     steps:
-      - name: Release reviewed static artifact
+      - name: Publish approved site
         id: pages
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
