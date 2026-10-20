@@ -26,7 +26,7 @@ export function supabase(token, admin = false) {
     // Set the auth option for this operation.
     auth: {
       // Set the persistSession option for this operation.
-      persistSession: false,
+      persistSession: true,
       // Set the autoRefreshToken option for this operation.
       autoRefreshToken: false,
       // Set the detectSessionInUrl option for this operation.

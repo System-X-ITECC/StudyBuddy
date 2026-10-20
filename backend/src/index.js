@@ -21,6 +21,8 @@ if (process.env.APP_ENV === "production" || process.env.VERCEL === "1") {
   }
 }
 const app = express(); // App is reusable for local test, integration tests and production hosting.
+const body = req.body //redeuce reduntancy
+
 // Initialize origins for the current operation.
 const origins = (process.env.CLIENT_ORIGINS || "http://localhost:4321")
   // Parse exact browser origins.
@@ -69,7 +71,7 @@ app.get("/api/health", (_req, res) =>
     ),
     // Set the provider option for this operation.
     provider: "supabase-node-api",
-    environment: process.env.APP_ENV || "testbed",
+    environment: process.env.APP_ENV || "testbed" || "production",
   // Close the current expression or block.
   }),
 ); // Expose readiness flags without credentials.
@@ -148,7 +150,7 @@ app.put("/api/profile", async (req, res) =>
       // Continue the current transformation.
       ...(await getProfile(req)),
       // Continue the current transformation.
-      ...profileSchema.parse(req.body),
+      ...profileSchema.parse(body),
     // Close the current expression or block.
     }),
   // Close the current expression or block.
@@ -226,7 +228,7 @@ app.post("/api/chats", async (req, res) => {
     // Continue the current transformation.
     .max(100)
     // Continue the current transformation.
-    .parse(req.body.title || "New conversation");
+    .parse(body.title || "New conversation");
   // Run res.json with the arguments below.
   res.json(
     // Wait for this asynchronous operation before continuing.
@@ -363,12 +365,12 @@ app.post(
     const extension = name.split(".").pop()?.toLowerCase();
     if (!name || name.length > 200 || !allowedExtensions.has(extension))
       return res.status(400).json({ error: "Choose a supported document or caption file." });
-    if (!Buffer.isBuffer(req.body) || req.body.length < 1 || req.body.length > MAX_UPLOAD)
+    if (!Buffer.isBuffer(body) || body.length < 1 || body.length > MAX_UPLOAD)
       return res.status(400).json({ error: "File must be between 1 byte and 12 MB." });
     // Check chat ownership before spending CPU on an untrusted document.
     const chat = await result(req.db.from("chats").select("id").eq("id", req.params.chat).maybeSingle());
     if (!chat) return res.status(404).json({ error: "Conversation not found." });
-    const extracted = await extract(req.body, name);
+    const extracted = await extract(body, name);
     res.json(await saveSource(req, name, extracted));
   },
 );
@@ -385,14 +387,14 @@ app.post("/api/chats/:chat/text", async (req, res) => {
     // Close the current expression or block.
     })
     // Continue the current transformation.
-    .parse(req.body);
+    .parse(body);
   // Run res.json with the arguments below.
   res.json(await saveSource(req, input.name, input.text));
 }); // Persist pasted notes or transcripts in Supabase.
 // Run app.post with the arguments below.
 app.post("/api/chats/:chat/link", async (req, res) => {
   // Initialize url for the current operation.
-  const url = z.string().url().max(2048).parse(req.body.url);
+  const url = z.string().url().max(2048).parse(body.url);
   // Apply the following behavior only when its condition matches.
   if (/(^|\.)(youtube\.com|youtu\.be|vimeo\.com)$/i.test(new URL(url).hostname))
     // Return the result to the calling operation.
@@ -480,7 +482,7 @@ const generation = z.object({
 // Run app.post with the arguments below.
 app.post("/api/chats/:chat/ask", async (req, res) => {
   // Run a grounded request under a distributed database lease.
-  const input = generation.parse(req.body); // Validate inputs before acquiring a lease.
+  const input = generation.parse(body); // Validate inputs before acquiring a lease.
   // Apply the following behavior only when its condition matches.
   if (!(await result(req.db.rpc("consume_budget", { p_kind: "ai" }))))
     // Return the result to the calling operation.
@@ -712,7 +714,7 @@ app.post("/api/feedback", async (req, res) => {
     // Close the current expression or block.
     })
     // Continue the current transformation.
-    .parse(req.body);
+    .parse(body);
   // Initialize message for the current operation.
   const message = await result(
     // Supply this expression to the enclosing operation.
@@ -761,7 +763,7 @@ app.post("/api/achievements", async (req, res) => {
     // Continue the current transformation.
     .enum(["first-review", "five-cards", "study-plan"])
     // Continue the current transformation.
-    .parse(req.body.goal);
+    .parse(body.goal);
   // Apply the following behavior only when its condition matches.
   if (!(await getProfile(req)).achievements)
     // Return the result to the calling operation.
@@ -800,7 +802,7 @@ app.post("/api/achievements", async (req, res) => {
 // Run app.post with the arguments below.
 app.post("/api/export", async (req, res) => {
   // Initialize format for the current operation.
-  const format = z.enum(["docx", "pptx", "pdf"]).parse(req.body.format);
+  const format = z.enum(["docx", "pptx", "pdf"]).parse(body.format);
   if (format === "pptx") {
     return res.status(501).json({
       error: "PowerPoint export is paused for this demo. Download Word or PDF instead.",
@@ -808,7 +810,7 @@ app.post("/api/export", async (req, res) => {
     });
   }
   // Initialize output for the current operation.
-  const output = await exportArtifact(req.body.artifact, format);
+  const output = await exportArtifact(body.artifact, format);
   // Apply the following behavior only when its condition matches.
   if (output.buffer.length > 4 * 1024 * 1024)
     // Return the result to the calling operation.
@@ -825,7 +827,7 @@ app.post("/api/export", async (req, res) => {
       });
   // Exported office files are separate private Library items; saving should never block the download.
   let savedToLibrary = 'saved';
-  try { await saveExportItem(req, req.body.artifact, format, output); }
+  try { await saveExportItem(req, body.artifact, format, output); }
   catch (error) {
     savedToLibrary = 'failed';
     console.warn('Could not save StudySpace export to Library:', error.message);

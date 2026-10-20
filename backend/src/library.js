@@ -108,7 +108,8 @@ libraryRouter.get('/:id',async (req,res) => {
 
 libraryRouter.put('/:id',async (req,res) => {
   const id = uuid.parse(req.params.id);
-  const patch = editSchema.parse(req.body);
+  const body = req.body
+  const patch = editSchema.parse(body);
   const item = await result(req.db.from('library_items')
     .update({...patch,tags:normalizeTags(patch.tags)}).eq('id',id).eq('user_id',req.user)
     .select('id,title,category,tags,created_at').maybeSingle());
@@ -124,13 +125,13 @@ libraryRouter.post('/upload',raw({type:'application/octet-stream',limit:'10mb'})
   const info = fileInfo(name);
   if (!info || !name || name.length > 160 || /[\x00-\x1f/\\]/.test(name))
     return res.status(400).json({error:'Unsupported file. Choose an image, audio, video, or study document.'});
-  if (!Buffer.isBuffer(req.body) || !req.body.length || req.body.length > LIBRARY_FILE_LIMIT)
+  if (!Buffer.isBuffer(body) || !body.length || body.length > LIBRARY_FILE_LIMIT)
     return res.status(413).json({error:'Choose a file up to 10 MB.'});
-  if (!matchesMediaSignature(info, req.body)) return res.status(400).json({error:'File contents do not match the selected format.'});
+  if (!matchesMediaSignature(info, body)) return res.status(400).json({error:'File contents do not match the selected format.'});
   const filename = `${randomUUID()}.${info.ext}`;
   const path = `${req.user}/${filename}`;
   // Only the user's authenticated Supabase client touches the private bucket; Storage RLS applies.
-  const {error:uploadError} = await req.db.storage.from(LIBRARY_BUCKET).upload(path,req.body,{
+  const {error:uploadError} = await req.db.storage.from(LIBRARY_BUCKET).upload(path,body,{
     contentType:info.mime,upsert:false,cacheControl:'3600',
   });
   if (uploadError) throw Object.assign(new Error(uploadError.message),{status:502});
@@ -138,7 +139,7 @@ libraryRouter.post('/upload',raw({type:'application/octet-stream',limit:'10mb'})
     const tags = normalizeTags([info.category,'uploaded']);
     const item = await result(req.db.from('library_items').insert({
       user_id:req.user,title:name,category:info.category,tags,
-      storage_path:path,mime_type:info.mime,bytes:req.body.length,
+      storage_path:path,mime_type:info.mime,bytes:body.length,
     }).select('id,title,category,tags,created_at').single());
     res.status(201).json(item);
   } catch (error) {
